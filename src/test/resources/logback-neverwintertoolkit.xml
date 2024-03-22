@@ -1,0 +1,104 @@
+<configuration>
+
+    <appender name="FILE-ERROR" class="ch.qos.logback.core.FileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <file>error.log</file>
+        <append>false</append>
+        <!-- set immediateFlush to false for much higher logging throughput -->
+        <immediateFlush>true</immediateFlush>
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-4relative [%thread] %-5level %logger{35} -%kvp- %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE-TRACE" class="ch.qos.logback.core.FileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+        <file>trace.log</file>
+        <append>false</append>
+        <!-- set immediateFlush to false for much higher logging throughput -->
+        <immediateFlush>true</immediateFlush>
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-4relative [%thread] %-5level %logger{35} -%kvp- %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE-DEBUG" class="ch.qos.logback.core.FileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <file>debug.log</file>
+        <append>false</append>
+        <!-- set immediateFlush to false for much higher logging throughput -->
+        <immediateFlush>true</immediateFlush>
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-4relative [%thread] %-5level %logger{35} -%kvp- %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <!--            <level>ERROR</level>-->
+        </filter>
+        <encoder>
+            <!--            <pattern>%cyan(%d{HH:mm:ss.SSS}) %gray([%thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n</pattern>-->
+            <pattern>%d{HH:mm:ss.SSS} [%-10thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+<!--    <logger name="neverwintertoolkit.command.GffPojoCreateCommand" level="trace" additivity="false"/>-->
+    <logger name="neverwintertoolkit.command.GffPojoCreateCommand" level="trace"/>
+    <!--    <logger name="neverwintertoolkit" level="debug" additivity="false"/>-->
+
+    <root level="DEBUG">
+        <appender-ref ref="FILE-ERROR"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE-DEBUG"/>
+        <appender-ref ref="FILE-TRACE"/>
+    </root>
+    <!--    <root level="TRACE">-->
+    <!--    </root>-->
+
+</configuration>
+
+        <!--
+        <configuration>
+
+        <property name="HOME_LOG" value="logs/app.log"/>
+
+        <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${HOME_LOG}</file>
+
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>logs/archived/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+                <maxFileSize>10MB</maxFileSize>
+                <totalSizeCap>20GB</totalSizeCap>
+                <maxHistory>60</maxHistory>
+            </rollingPolicy>
+
+            <encoder>
+                <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+            </encoder>
+        </appender>
+
+        <logger name="com.mkyong" level="debug" additivity="false">
+            <appender-ref ref="FILE-ROLLING"/>
+        </logger>
+
+        <root level="error">
+            <appender-ref ref="FILE-ROLLING"/>
+        </root>
+
+        </configuration>
+        -->

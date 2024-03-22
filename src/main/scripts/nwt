@@ -1,0 +1,13 @@
+#!/bin/zsh
+
+if [ -e logback.xml ]; then
+    L="-Dlogback.configurationFile=$PWD/logback.xml"
+else
+    L="-D"
+fi
+
+DIR=$(dirname "$0")
+
+JAR="${DIR}/nwt.jar"
+
+java "${L}" -cp "${JAR}" neverwintertoolkit.command.NwtCommandKt "$@"

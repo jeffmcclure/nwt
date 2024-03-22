@@ -1,0 +1,17 @@
+[
+  {
+    "author" : "Jane Dough<jan.dough@gmail.com>",
+    "description" : "test module",
+    "dirPath" : [ ],
+    "erfPath" : [ ],
+    "name" : "test module",
+    "overwrite" : false,
+    "rules" : {
+      "module.*" : "src",
+      "*.ncs" : ""
+    },
+    "source" : "src/test/resources/mod/module000a.mod",
+    "target" : "build/module000aa.mod",
+    "url" : "https://google.com/"
+  }
+]

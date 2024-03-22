@@ -1,0 +1,13 @@
+{
+  "source": "sample01.mod",
+  "target": "sample01.mod",
+  "overwrite" : false,
+  "name": "",
+  "description": "",
+  "url": "",
+  "author": "",
+  "rules": {
+    "module.*": "src",
+    "*.ncs": "target/ncs",
+  }
+}

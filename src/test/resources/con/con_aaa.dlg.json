@@ -1,0 +1,110 @@
+{
+  "DelayEntry": 0,
+  "DelayReply": 0,
+  "EndConverAbort": "nw_walk_wp",
+  "EndConversation": "nw_walk_wp",
+  "EntryList": [
+    {
+      "StructId": 1,
+      "Delay": -1,
+      "Text": {
+        "strings": [
+          {
+            "id": 0,
+            "string": "NPC Top 2"
+          },
+          {
+            "id": 1,
+            "string": "NPC Top 2"
+          }
+        ]
+      },
+      "RepliesList": [
+        {
+          "RefStructId": 8,
+          "IsChild": 0
+        },
+        {
+          "RefStructId": 7,
+          "IsChild": 0
+        }
+      ]
+    },
+    {
+      "StructId": 4,
+      "Delay": -1,
+      "Text": "some text",
+      "RepliesList": [
+        {
+          "RefStructId": 10,
+          "IsChild": 0
+        },
+        {
+          "RefStructId": 9,
+          "IsChild": 0
+        }
+      ]
+    }
+  ],
+  "NumWords": 14,
+  "PreventZoomIn": 0,
+  "ReplyList": [
+    {
+      "StructId": 7,
+      "Delay": -1,
+      "Text": {
+        "stringRef": 1234,
+        "strings": [
+          {
+            "id": 0,
+            "string": "PC 2.b"
+          }
+        ]
+      }
+    },
+    {
+      "StructId": 8,
+      "Delay": -1,
+      "Text": {
+        "strings": [
+          {
+            "id": 0,
+            "string": "PC 2.a"
+          }
+        ]
+      }
+    },
+    {
+      "StructId": 9,
+      "Delay": -1,
+      "Text": {
+        "strings": [
+          {
+            "id": 0,
+            "string": "PC 1.b"
+          }
+        ]
+      }
+    },
+    {
+      "StructId": 10,
+      "Delay": -1,
+      "Text": {
+        "strings": [
+          {
+            "id": 0,
+            "string": "PC 1.a"
+          }
+        ]
+      }
+    }
+  ],
+  "StartingList": [
+    {
+      "RefStructId": 4
+    },
+    {
+      "RefStructId": 1
+    }
+  ]
+}
