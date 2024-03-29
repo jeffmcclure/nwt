@@ -1960,6 +1960,26 @@ class GitItem {
     @get:JsonProperty("XModelPart1")
     @set:JsonProperty("XModelPart1")
     var xModelPart1: UShort? = null
+
+//    @get:NwnField(name = "xModelPart2", type = "WORD")
+//    @get:JsonProperty("XModelPart2")
+//    @set:JsonProperty("XModelPart2")
+//    var xModelPart2: UShort? = null
+//
+//    @get:NwnField(name = "xModelPart3", type = "WORD")
+//    @get:JsonProperty("XModelPart3")
+//    @set:JsonProperty("XModelPart3")
+//    var xModelPart3: UShort? = null
+//
+//    @get:NwnField(name = "xArmorPart_LHand", type = "WORD")
+//    @get:JsonProperty("XArmorPartLHand")
+//    @set:JsonProperty("XArmorPartLHand")
+//    var xArmorPartLHand: UShort? = null
+//
+//    @get:NwnField(name = "xArmorPart_Robe", type = "WORD")
+//    @get:JsonProperty("XArmorPartRobe")
+//    @set:JsonProperty("XArmorPartRobe")
+//    var xArmorPartRobe: UShort? = null
 }
 
 class GitKnown {
