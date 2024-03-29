@@ -85,7 +85,7 @@ class Unpack(
                                     sem.release()
                                 }
                             }
-                            erf.extractEntry(entry, tar, useJson, false)
+                            erf.extractEntry(entry, tar, useJson, overwrite = false, toStdout = false)
                         }
                     } else {
                         unpackCommand.logInfo { "%20s %10s %s".format(fname, "skipping", entry.fileNameWithExtension) }

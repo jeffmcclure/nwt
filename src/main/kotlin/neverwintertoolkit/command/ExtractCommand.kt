@@ -33,6 +33,9 @@ class ExtractCommand : BaseCommand() {
     @CommandLine.Option(names = ["-O", "--to-stdout"], required = false, description = ["Extract files to standard output."])
     var toStdout = false
 
+    @CommandLine.Option(names = ["--overwrite"], required = false, description = ["Overwrite existing file"])
+    var overwrite = false
+
     var useJson = true
 
     override fun called(): Int {
@@ -63,7 +66,14 @@ class ExtractCommand : BaseCommand() {
                     println()
                 }
 
-                return erfFile.extractAll(status = status, useJson = useJson, noErf = !erf, patterns = patterns ?: emptyList(), toStdout = toStdout)
+                return erfFile.extractAll(
+                    status = status,
+                    useJson = useJson,
+                    noErf = !erf,
+                    patterns = patterns ?: emptyList(),
+                    toStdout = toStdout,
+                    overwrite = overwrite
+                )
             }
 
             else -> {

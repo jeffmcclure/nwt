@@ -95,7 +95,7 @@ class GffPojoCreateCommand : GffOptions(), Callable<Int> {
                     FileType.kFileTypeITP,
                     -> {
                         val target = dir.resolve(entry.fileNameWithExtension)
-                        erf.extractEntry(entry, target, useJson = false, toStdout = false)
+                        erf.extractEntry(entry, target, useJson = false, overwrite = false, toStdout = false)
                         processOneFile(target.toFile(), clasMap, erfFile)
                         target.deleteExisting()
                     }

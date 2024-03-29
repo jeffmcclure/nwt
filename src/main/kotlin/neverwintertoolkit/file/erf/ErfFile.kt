@@ -220,7 +220,8 @@ class ErfFile(val file: Path, val globalOptions: GlobalOptions = GlobalOptions()
         toStdout: Boolean,
         noErf: Boolean,
         patterns: List<String> = emptyList(),
-        status: PrintStream
+        status: PrintStream,
+        overwrite: Boolean = false
     ): Int {
         if (!noErf) {
             extractErfJson(targetDir, status = status)
@@ -245,7 +246,7 @@ class ErfFile(val file: Path, val globalOptions: GlobalOptions = GlobalOptions()
         list.forEachIndexed { index, entry ->
             try {
                 val targetPath = targetDir.resolve(entry.fileNameWithExtension)
-                extractEntry(entry, targetPath, useJson = useJson, toStdout = toStdout, status = { name ->
+                extractEntry(entry, targetPath, useJson = useJson, toStdout = toStdout, overwrite = overwrite, status = { name ->
                     globalOptions.logInfo {
                         "Extracting ${index + 1}/$count $name"
                     }
@@ -261,7 +262,7 @@ class ErfFile(val file: Path, val globalOptions: GlobalOptions = GlobalOptions()
         return 0
     }
 
-    fun extractEntry(entry: ErfFileEntry, targetPath: Path, useJson: Boolean, toStdout: Boolean, status: (name: String) -> Unit = {}) {
+    fun extractEntry(entry: ErfFileEntry, targetPath: Path, useJson: Boolean, toStdout: Boolean, overwrite: Boolean, status: (name: String) -> Unit = {}) {
         logger.debug("extract {}[{}] to {}", file, entry.fileNameWithExtension, targetPath)
 
         val convertToJson = useJson &&
@@ -287,10 +288,16 @@ class ErfFile(val file: Path, val globalOptions: GlobalOptions = GlobalOptions()
              */
             fun overwriteCheck(path: Path): Boolean {
                 val exists = Files.exists(path)
-                if (exists) {
+                if (!exists)
+                    return true
+
+                if (overwrite) {
+                    System.err.println("overwiting existing file ${path.name}")
+                    return true
+                } else {
                     System.err.println("skipping existing file ${path.name}")
+                    return false
                 }
-                return !exists
             }
 
             if (convertToJson) {
