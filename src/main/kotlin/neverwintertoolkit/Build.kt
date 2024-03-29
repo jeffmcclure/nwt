@@ -6,11 +6,25 @@ import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.runBlocking
 import neverwintertoolkit.command.BuildCommand
 import neverwintertoolkit.file.erf.ErfWriter
+import neverwintertoolkit.file.gff.CExoLocString
 import neverwintertoolkit.file.gff.GffFactory
+import neverwintertoolkit.file.gff.GffObj
+import neverwintertoolkit.model.dlg.Dlg
+import neverwintertoolkit.model.dlg.DlgEntry
+import neverwintertoolkit.model.dlg.DlgFoo
+import neverwintertoolkit.model.dlg.DlgReply
+import neverwintertoolkit.model.dlg.DlgsNpcResponse
+import neverwintertoolkit.model.dlg.Dlgs
+import neverwintertoolkit.model.dlg.DlgsPcChoice
+import neverwintertoolkit.model.dlg.DlgSorter
+import neverwintertoolkit.model.dlg.DlgStarting
+import java.lang.RuntimeException
+import java.net.URL
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.ArrayList
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.io.path.exists
@@ -32,7 +46,7 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
 
     val targets: List<Nwt> by lazy { Nwt.parseJson(nwtJson) }
 
-    class Rec(val aPath: Path, val baseName: String, val loc: String)
+    data class Rec(val aPath: Path, val baseName: String, val loc: String, val targetPath: Path)
 
     @OptIn(DelicateCoroutinesApi::class)
     fun pack() {
@@ -64,6 +78,8 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
                     allRules.addAll(baseRules)
                     allRules.addAll(autoRules.filter { a -> baseRules.none { b -> a.second == b.second } })
 
+                    allRules.add(Pair("*.dlg-part", "src/dlg"))
+
                     if (buildCommand.debugEnabled) {
                         status.println("baseRules=" + baseRules.map { it.second })
                         status.println("autoRules=" + autoRules.map { it.second })
@@ -76,27 +92,46 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
                             val pathMatcher = FileSystems.getDefault().getPathMatcher("glob:$pattern")
 
                             // sort so if the source and target are both present the .json source will be processed first
-                            theDir.listDirectoryEntries().filter { it.isRegularFile() }.sortedBy { if (GffFactory.isJsonFile(it)) 0 else 1 }
+                            theDir.listDirectoryEntries().filter { it.isRegularFile() }
+                                .sortedWith(compareBy<Path> { if (GffFactory.isJsonFile(it)) 0 else 1 }.thenBy { it.name.lowercase() })
                                 .mapNotNull { aPath ->
                                     val baseName = aPath.name.replace(jsonExtension, "")
                                     val matches = pathMatcher.matches(Paths.get(baseName))
-                                    if (matches) {
-                                        if (added.putIfAbsent(aPath.name, true) != null) {
-                                            status.println("Skipping duplicate '${aPath.name}'")
-                                            null
-                                        } else
-                                            Rec(aPath, baseName, loc)
-                                    } else null
+                                    if (!matches) {
+                                        buildCommand.logTrace { "nomatch $aPath" }
+                                        null
+                                    } else {
+                                        buildCommand.logTrace { "match $aPath" }
+//                                        if (added.putIfAbsent(aPath.name, true) != null) {
+//                                            status.println("Skipping duplicate '${aPath.name}'")
+//                                            null
+//                                        } else {
+                                        val (name, ext) = baseName.extractExtension3()
+                                        val index = aPath.name.indexOf('.')
+
+                                        val outBaseName = if (ext == ".dlg-part")
+                                            aPath.name.substring(0, index) + ".dlg"
+                                        else
+                                            baseName
+
+                                        val targ = dir.resolve("target").resolve(loc).resolve(outBaseName)
+
+                                        Rec(aPath, baseName, loc, targ)
+                                    }
                                 }
                         } else null
                     }.flatten() ?: emptyList()
 
                     val counter = AtomicInteger()
                     val size = list.size
-                    list.forEach { rec ->
+
+                    buildCommand.logDebug { "list.size=${list.size}" }
+                    val list2 = list.groupBy { it.targetPath }
+                    buildCommand.logDebug { "list2.size=${list2.size}" }
+                    list2.forEach { rec ->
                         ascope.launch {
                             logger.debug("processing of {}", rec)
-                            val toAdd = processPath(rec, counter, size)
+                            val toAdd = processPaths(rec.value, counter, size)
                             erfFile.addFile(toAdd)
                         }
                     }
@@ -112,29 +147,173 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
         }
     }
 
-    private suspend fun processPath(rec: Rec, index: AtomicInteger, size: Int): Path {
-        return if (GffFactory.isJsonFile(rec.aPath)) {
-            val targ = dir.resolve("target").resolve(rec.loc).resolve(rec.baseName)
-            Files.getLastModifiedTime(rec.aPath)
-            if (targ.exists() && targ.getLastModifiedTime() >= rec.aPath.getLastModifiedTime()) {
-                buildCommand.infoSuspend { "%5d / %5d : Adding cached %s".format(index.incrementAndGet(), size, targ) }
-            } else {
-                buildCommand.infoSuspend { "%5d / %5d : Compiling and adding %s".format(index.incrementAndGet(), size, rec.aPath) }
-                val factory = GffFactory.getFactoryForFileName(rec.aPath.name)
-                    ?: throw java.lang.RuntimeException("Could not find factory for ${rec.aPath.name}")
-                val obj = factory.parseJson(rec.aPath)
+    private suspend fun processPaths(rec: List<Rec>, index: AtomicInteger, size: Int): Path {
+        rec.firstOrNull { !GffFactory.isJsonFile(it.aPath) }?.let { rec1 ->
+            buildCommand.infoSuspend { "%5d / %5d : Adding %s".format(index.incrementAndGet(), size, rec1.aPath) }
+            return rec1.aPath
+        }
 
-                targ.parent?.let { d ->
-                    if (!Files.isDirectory(d)) Files.createDirectories(d)
-                }
+        // target artifact is the same for all
+        val targ = dir.resolve("target").resolve(rec.first().loc).resolve(rec.first().baseName)
+        if (targ.exists() && !rec.any { it.aPath.getLastModifiedTime() > targ.getLastModifiedTime() }) {
+            buildCommand.infoSuspend { "%5d / %5d : Adding cached %s".format(index.incrementAndGet(), size, targ) }
+            return targ
+        }
 
+//        buildCommand.logDebug { "size = ${rec.size}" }
+        if (buildCommand.traceEnabled) {
+            rec.forEach { aa ->
+                buildCommand.logTrace { "$aa" }
+            }
+        }
+
+        if (rec.any {
+                it.baseName.lowercase().endsWith(".dlg-part.json5") ||
+                        it.baseName.lowercase().endsWith(".dlg-part.json") ||
+                        it.baseName.lowercase().endsWith(".dlg-part")
+            }) {
+            buildCommand.logDebug { "one" }
+            rec.forEach {
+                buildCommand.logDebug { "$it" }
+            }
+            val arec = rec.firstOrNull {
+                it.baseName.lowercase().endsWith(".dlg.json5") ||
+                        it.baseName.lowercase().endsWith(".dlg.json") ||
+                        it.baseName.lowercase().endsWith(".dlg")
+            } ?: throw RuntimeException("none found")
+            buildCommand.logDebug { "$arec" }
+            val obj = processOnePath(index, size, arec, targ) as Dlg
+            rec.filter {
+                it.baseName.lowercase().endsWith(".dlg-part.json5") ||
+                        it.baseName.lowercase().endsWith(".dlg-part.json") ||
+                        it.baseName.lowercase().endsWith(".dlg-part")
+            }.forEach { aaa: Rec ->
+                buildCommand.logDebug { "two" }
+                buildCommand.infoSuspend { "%5d / %5d : Compiling and adding %s".format(index.incrementAndGet(), size, aaa.aPath) }
+                readPart(obj, aaa.aPath.toUri().toURL())
+            }
+            DlgSorter(obj).sorted().writeGff(targ)
+//            obj.writeGff(targ)
+        } else {
+            rec.forEach { arec ->
+                val obj = processOnePath(index, size, arec, targ)
                 obj.writeGff(targ)
             }
-            targ
-        } else {
-            buildCommand.infoSuspend { "%5d / %5d : Adding %s".format(index.incrementAndGet(), size, rec.aPath) }
-            rec.aPath
         }
+
+        return targ
+    }
+
+    private suspend fun processOnePath(
+        index: AtomicInteger,
+        size: Int,
+        arec: Rec,
+        targ: Path
+    ): GffObj {
+        buildCommand.infoSuspend { "%5d / %5d : Compiling and adding %s".format(index.incrementAndGet(), size, arec.aPath) }
+        val factory: GffFactory<out GffObj> = GffFactory.getFactoryForFileName(arec.aPath.name)
+            ?: throw RuntimeException("Could not find factory for ${arec.aPath.name}")
+
+        val obj1 = factory.parseJson(arec.aPath)
+
+        targ.parent?.let { d ->
+            if (!Files.isDirectory(d)) Files.createDirectories(d)
+        }
+        return obj1
+    }
+
+}
+
+fun patchIn(first: DlgReply, userChoiceList: MutableList<DlgsPcChoice>, adria: Dlg, obj: DlgsNpcResponse) {
+    val userChoice = userChoiceList.firstOrNull { it.index == first.replyIndex!! }
+
+    val foo = DlgFoo()
+    foo.index = first.replyIndex!!.toUInt()
+    foo.active = userChoice?.appearIfScript
+
+    val found: DlgStarting = adria.startingList!!.firstOrNull {
+        (it.active ?: "") == (obj.appearIfScript ?: "") && // allow blank to match null
+                adria.entryList!![it.index!!.toInt()].text?.strings?.first()?.string == obj.npcSays
+    } ?: throw RuntimeException("Could not find NPC starting statement '${obj.npcSays}' with active='${obj.appearIfScript}'")
+
+    val foo2 = adria.entryList!![found.index!!.toInt()]
+    foo2.repliesList = foo2.repliesList!! + listOf(foo)
+}
+
+
+fun readPart(adria: Dlg, res: URL) {
+    val mapper = getBaseMapper()
+    val root = mapper.readValue(res, Dlgs::class.java)
+
+    val npc = mutableListOf<DlgsNpcResponse>()
+    val pc = mutableListOf<DlgsPcChoice>()
+
+    var entryNum = adria.entryList!!.size
+    var replyNum = adria.replyList!!.size
+
+    fun flatten(obj: DlgsNpcResponse) {
+        obj.userChoices?.let { userList: ArrayList<DlgsPcChoice> ->
+            userList.forEach { aUser ->
+                pc.add(aUser)
+                aUser.index = replyNum++
+            }
+            userList.forEach { user ->
+                user.response?.let { response: DlgsNpcResponse ->
+                    npc.add(response)
+                    response.index = entryNum++
+                    flatten(response)
+                }
+            }
+        }
+    }
+
+    flatten(root)
+
+    fun List<DlgsNpcResponse>.toEntryList(): List<DlgEntry> {
+        return this.map { response ->
+            DlgEntry().also { e ->
+                val str = CExoLocString(response.npcSays!!)
+                e.text = str
+                e.script = response.onAppearScript
+                e.repliesList = response.userChoices?.map { dlgUserChoice ->
+                    val dlgFoo = DlgFoo()
+                    dlgFoo.active = dlgUserChoice.appearIfScript
+                    dlgFoo.index = dlgUserChoice.index?.toUInt()
+                    dlgFoo.isChild = false
+                    dlgFoo
+                }
+            }
+        }
+    }
+
+    fun List<DlgsPcChoice>.toReplyList(): List<DlgReply> {
+        return this.map { xxx: DlgsPcChoice ->
+            DlgReply().also { e ->
+                e.text = CExoLocString(xxx.userSays!!)
+                e.script = xxx.onSelectScript
+                xxx.response?.let { response: DlgsNpcResponse ->
+                    val foo = DlgFoo()
+                    foo.active = response.appearIfScript
+                    foo.index = response.index?.toUInt()
+                    foo.isChild = false
+                    e.entriesList = listOf(foo)
+                }
+            }
+        }
+    }
+
+    val npcEntryList = npc.toEntryList()
+    adria.entryList = adria.entryList!! + npcEntryList
+    val pcReplyList = pc.toReplyList()
+    adria.replyList = adria.replyList!! + pcReplyList
+
+    var index = 0
+    adria.entryList?.forEach { it.entryIndex = index++ }
+    index = 0
+    adria.replyList?.forEach { it.replyIndex = index++ }
+
+    root.userChoices?.forEachIndexed { index: Int, userChoice ->
+        patchIn(pcReplyList[index], pc, adria, root)
     }
 
 }

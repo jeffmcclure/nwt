@@ -11,12 +11,13 @@ import neverwintertoolkit.UpperCamelCaseStrategy
 @Introspected
 @com.fasterxml.jackson.databind.annotation.JsonNaming(UpperCamelCaseStrategy::class)
 class CExoLocString(
-    stringRef: Long? = null,
-    strings: List<GffFile.GffIdString> = listOf()
+    var stringRef: Long? = 4294967295L,
+    var strings: List<GffFile.GffIdString> = listOf()
 ) {
+    constructor(str: String) : this(4294967295L, listOf(GffFile.GffIdString(str)))
 
-    var stringRef: Long? = stringRef
-    var strings: List<GffFile.GffIdString> = strings
+//    var stringRef: Long? = stringRef
+//    var strings: List<GffFile.GffIdString> = strings
 
     override fun toString(): String {
         return "CExoLocString(stringRef=$stringRef, strings=$strings)"

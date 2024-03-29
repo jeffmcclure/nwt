@@ -135,7 +135,10 @@ open class GffAnnotationWriter constructor(val gffObj: GffObj) : GffWriterBase()
 
                     GffFile.GffFieldType.SHORT -> createFieldShort(value.getter.call(obj1) as Short?, nwnField.name)
 
-                    GffFile.GffFieldType.DWORD -> createFieldDWORD(value.getter.call(obj1) as UInt?, nwnField.name)
+                    GffFile.GffFieldType.DWORD -> {
+                        val aval: UInt? = value.getter.call(obj1) as UInt? ?: if (nwnField.blankBehavior == BlankBehavior.DEFAULT_VALUE) nwnField.defaultValue.toUInt() else null
+                        createFieldDWORD(aval, nwnField.name)
+                    }
 
                     GffFile.GffFieldType.INT -> createFieldINT(value.getter.call(obj1) as Int?, nwnField.name)
 

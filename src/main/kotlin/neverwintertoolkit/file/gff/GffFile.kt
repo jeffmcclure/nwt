@@ -110,10 +110,10 @@ class GffFile constructor(
     @Introspected
     @com.fasterxml.jackson.databind.annotation.JsonNaming(UpperCamelCaseStrategy::class)
     data class GffIdString(
-        var id: Int? = null,
+        var id: Int? = 0,
         var string: String? = null
     ) {
-        constructor() : this(null, null)
+        constructor(str: String) : this(0, str)
 
         override fun toString(): String {
             return "IdString(id=$id, string=$string, string.length=${string?.length} string.size=${string?.toByteArray()?.size} ${string?.toByteArray(Charsets.ISO_8859_1)?.size} ${

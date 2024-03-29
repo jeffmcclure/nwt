@@ -2,7 +2,7 @@ package neverwintertoolkit.file.gff
 
 import com.github.difflib.DiffUtils
 import neverwintertoolkit.JsonSettings
-import neverwintertoolkit.extractExtension
+import neverwintertoolkit.extractExtension1
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import java.nio.file.Files
@@ -21,7 +21,7 @@ class TestGffFile<T : GffObj>(
     val compareStructCounts: Boolean = true,
     val regex: List<Regex> = listOf()
 ) {
-    val extension = extractExtension(gffFile.name).second
+    val extension = extractExtension1(gffFile.name).second
     val list = mutableListOf<Path>()
 
     fun getFile(base: String): Path {

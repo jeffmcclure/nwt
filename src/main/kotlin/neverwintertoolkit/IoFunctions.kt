@@ -284,15 +284,32 @@ fun List<String>.sortFirstListBySecondList(fieldOrder: List<String>): List<Strin
     }.filter { fieldOrder.indexOf(it) != -1 }
 }
 
+/**
+ * returned extension starts with a period
+ */
 fun getExtension(fname: String): String {
-    return extractExtension(fname).second
+    return extractExtension1(fname).second
 }
 
-fun extractExtension(fname: String): Pair<String, String> {
+/**
+ * returned extension starts with a period
+ */
+fun extractExtension1(fname: String): Pair<String, String> {
     val index = fname.lastIndexOf('.')
     if (index == -1) throw RuntimeException("$fname does not have an extension")
     val name = fname.substring(0, index)
     val ext = fname.substring(index)
+    return Pair(name, ext)
+}
+
+/**
+ * returned extension starts with a period
+ */
+fun String.extractExtension3(): Pair<String, String> {
+    val index = this.lastIndexOf('.')
+    if (index == -1) throw RuntimeException("$this does not have an extension")
+    val name = this.substring(0, index)
+    val ext = this.substring(index)
     return Pair(name, ext)
 }
 

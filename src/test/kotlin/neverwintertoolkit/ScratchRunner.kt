@@ -3,6 +3,9 @@ package neverwintertoolkit
 import com.fasterxml.jackson.databind.ObjectMapper
 import neverwintertoolkit.con.BaseTest
 import neverwintertoolkit.file.gff.GffFactory
+import neverwintertoolkit.model.dlg.Dlg
+import neverwintertoolkit.model.dlg.DlgSorter
+import java.net.URL
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.file.FileSystems
@@ -10,20 +13,39 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.Arrays
 import kotlin.io.path.getLastModifiedTime
-import kotlin.io.path.isDirectory
-import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.writeText
 import kotlin.test.DefaultAsserter.assertTrue
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-
 @Ignore
 class ScratchRunner : BaseTest() {
 
+    @Test
+    fun json22() {
+        val adriaUrl: URL = this::class.java.getResource("/con_adria.dlg.json5")!!
+        val adria: Dlg = Dlg.factory.parseJson(adriaUrl)
+
+        val res: URL = this::class.java.getResource("/con_adria.dlg-part.json5")!!
+        readPart(adria, res)
+
+        val path = Paths.get("build").resolve("out.dlg.json5")
+        adria.writeJson(path)
+
+        val outGff = Paths.get("build").resolve("out.dlg")
+        adria.writeGff(outGff)
+
+        val sorted = DlgSorter(adria).sorted().toJson()
+//        println(DlgSorter(adria).sorted().toJson())
+        Paths.get("build").resolve("sorted.json5").writeText(sorted)
+
+        println()
+    }
+
     var yes = true
+
     @Test
     fun dir() {
-
         val x = listOf("one two", "three four").joinToString("\":\"")
         println(x)
 //        val dir = Paths.get(System.getProperty("user.home"))
@@ -68,14 +90,14 @@ class ScratchRunner : BaseTest() {
 
     fun testx(fname: String) {
         val start = System.currentTimeMillis()
-        val pair = extractExtension(fname)
+        val pair = extractExtension1(fname)
         val end = System.currentTimeMillis()
-        println("extractExtension  $pair, (${end-start}))")
+        println("extractExtension  $pair, (${end - start}))")
 
         val start2 = System.currentTimeMillis()
         val pair2 = extractExtension2(fname)
         val end2 = System.currentTimeMillis()
-        println("extractExtension2 $pair2, (${end2-start2}))")
+        println("extractExtension2 $pair2, (${end2 - start2}))")
     }
 
     @Test
@@ -277,6 +299,7 @@ class ScratchRunner : BaseTest() {
     }
 }
 
+
 interface IntA {
     fun getMessage(): String = "Hello, IntA"
 }
@@ -285,4 +308,3 @@ interface IntB {
     fun getMessage(): String = "Hello, IntB"
 }
 
-//class ClassC : IntA, IntB

@@ -98,7 +98,7 @@ interface GffFactory<T : GffObj> : BaseMapper {
             return getFactoryForType(getFileType(name))
         }
 
-        private val allFactories = listOf(
+        private val allFactories: List<GffFactory<out GffObj>> = listOf(
             Dlg.factory,
             Are.factory,
             Gic.factory,

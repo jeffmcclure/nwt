@@ -26,6 +26,7 @@ Other projects already exist that perform similar functions, so why create a new
 * [COMPILE.md](COMPILE.md)
 * [DEVELOP.md](DEVELOP.md)
 * [CHANGES.md](CHANGES.md)
+* [LICENSE](LICENSE)
 
 # Quickstart
 

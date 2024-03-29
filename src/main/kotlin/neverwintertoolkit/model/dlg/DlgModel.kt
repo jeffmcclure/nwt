@@ -2,6 +2,7 @@ package neverwintertoolkit.model.dlg
 
 // Generated 2024-02-01T15:21:55.550017
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import neverwintertoolkit.file.gff.CExoLocString
 import neverwintertoolkit.file.gff.GenericGffFactory
 import neverwintertoolkit.file.gff.GenericGffWriter
@@ -79,14 +80,22 @@ class DlgConditionParams {
     var value: String? = null
 }
 
+@JsonPropertyOrder(value = ["EntryIndex"])
 class DlgEntry {
+//    "AnimLoop" : 1,
+//    "Animation" : 0,
+//    "Delay" : 4294967295,
+
+    @get:JsonProperty("EntryIndex")
+    @set:JsonProperty("EntryIndex")
+    var entryIndex: Int? = null
 
     @get:NwnField(name = "RepliesList", type = "List", indexedStructId = true, gffOrder = 11)
     @get:JsonProperty("RepliesList")
     @set:JsonProperty("RepliesList")
     var repliesList: List<DlgFoo>? = null
 
-    @get:NwnField(name = "Delay", type = "DWORD", gffOrder = 7)
+    @get:NwnField(name = "Delay", type = "DWORD", gffOrder = 7, defaultValue = "4294967295", blankBehavior = BlankBehavior.DEFAULT_VALUE)
     @get:JsonProperty("Delay")
     @set:JsonProperty("Delay")
     var delay: UInt? = null
@@ -106,7 +115,7 @@ class DlgEntry {
     @set:JsonProperty("Comment")
     var comment: String? = null
 
-    @get:NwnField(name = "AnimLoop", type = "BYTE", gffOrder = 3)
+    @get:NwnField(name = "AnimLoop", type = "BYTE", gffOrder = 3, defaultValue = "1", blankBehavior = BlankBehavior.DEFAULT_VALUE)
     @get:JsonProperty("AnimLoop")
     @set:JsonProperty("AnimLoop")
     var animLoop: UByte? = null
@@ -126,7 +135,7 @@ class DlgEntry {
     @set:JsonProperty("Quest")
     var quest: String? = null
 
-    @get:NwnField(name = "Animation", type = "DWORD", gffOrder = 2)
+    @get:NwnField(name = "Animation", type = "DWORD", gffOrder = 2, defaultValue = "0", blankBehavior = BlankBehavior.DEFAULT_VALUE)
     @get:JsonProperty("Animation")
     @set:JsonProperty("Animation")
     var animation: UInt? = null
@@ -136,12 +145,13 @@ class DlgEntry {
     @set:JsonProperty("QuestEntry")
     var questEntry: UInt? = null
 
-    @get:NwnField(name = "ActionParams", type = "List", indexedStructId = true, gffOrder = 6)
+    @get:NwnField(name = "ActionParams", type = "List", indexedStructId = true, gffOrder = 6, blankBehavior = BlankBehavior.GENERATE)
     @get:JsonProperty("ActionParams")
     @set:JsonProperty("ActionParams")
-    var actionParams: List<DlgActionParams>? = null
+    var actionParams: List<DlgActionParams> = emptyList()
 }
 
+@JsonPropertyOrder(value = ["Index"])
 class DlgFoo {
 
     @get:NwnField(name = "IsChild", type = "BYTE", gffOrder = 4)
@@ -180,7 +190,12 @@ class DlgFoo {
     }
 }
 
+@JsonPropertyOrder(value = ["ReplyIndex"])
 class DlgReply {
+
+    @get:JsonProperty("ReplyIndex")
+    @set:JsonProperty("ReplyIndex")
+    var replyIndex: Int? = null
 
     fun removeDefaultValues(): DlgReply {
         if (delay == 4294967295u) delay = null
@@ -264,10 +279,10 @@ class DlgReply {
     @set:JsonProperty("QuestEntry")
     var questEntry: UInt? = null
 
-    @get:NwnField(name = "ActionParams", type = "List", indexedStructId = true, gffOrder = 5)
+    @get:NwnField(name = "ActionParams", type = "List", indexedStructId = true, gffOrder = 5, blankBehavior = BlankBehavior.GENERATE)
     @get:JsonProperty("ActionParams")
     @set:JsonProperty("ActionParams")
-    var actionParams: List<DlgActionParams>? = null
+    var actionParams: List<DlgActionParams> = emptyList()
 }
 
 class DlgStarting {

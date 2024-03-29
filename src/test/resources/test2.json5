@@ -1,0 +1,60 @@
+{
+  "npcSays" : "<StartAction>[Quest]</Start> ",
+  "userChoices" : [
+    {
+      "userSays" : "<StartAction>[Quest]</Start> Do you know Wirt?",
+      "appearsWhen" : "prq_loot_genie",
+      "response" : {
+        "npcSays" : "Hmmmm, well everyone else",
+        "appearsWhen" : "prq_xxxx",
+        "userChoices" : [
+          {
+            "userSays" : "what things have been happening",
+            "response" : {
+              "npcSays" : "All sorts of grisly stuff",
+              "appearsWhen" : "prq_xxxx",
+              "actionTakenWhenShownToUser" : "prq_xxxx",
+              "userChoices" : [
+                {
+                  "userSays" : "The cathedral?  What happened there?",
+                  "appearsWhen" : "prq_xxxx",
+                  "actionTakenWhenSelectedByUser" : "action_xxxx",
+                  "response" : {
+                    "npcSays" : "Oh I see you have been away too long...",
+                    "userChoices" : [
+                      {
+                        "userSays" : "Then what happened?",
+                        "response" : {
+                          "npcSays" : "only a handful of men came back....",
+                          "userChoices" : [
+                            {
+                              "userSays" : "Maybe I should as Farnham...",
+                              "response" : {
+                                "npcSays" : "NO!  Please, don't ask Farnham about that day!",
+                                "userChoices" : [
+                                  {
+                                    "userSays" : "Nonsense!  It'll be fun to see him crack"
+                                  },
+                                  {
+                                    "userSays" : "I remember that... Is there anyone else left in town?"
+                                  },
+                                  {
+                                    "userSays" : "Did the king do anything about these events?"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

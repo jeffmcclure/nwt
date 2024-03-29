@@ -1,14 +1,11 @@
 package neverwintertoolkit.command
 
-import io.micronaut.core.annotation.ReflectiveAccess
 import io.micronaut.serde.annotation.SerdeImport
 import neverwintertoolkit.command.config.ConfigCommand
 import neverwintertoolkit.command.erf.ErfCommand
 import neverwintertoolkit.command.gff.GffCommand
 import picocli.CommandLine
 import picocli.CommandLine.Command
-import picocli.CommandLine.IVersionProvider
-import java.util.Properties
 import kotlin.system.exitProcess
 
 @Command(
@@ -36,25 +33,3 @@ class NwtCommand {
 
 fun main(args: Array<String>): Unit = exitProcess(CommandLine(NwtCommand()).execute(*args))
 
-@ReflectiveAccess
-class VersionInfo : IVersionProvider {
-    companion object {
-        private val logger = org.slf4j.LoggerFactory.getLogger(VersionInfo::class.toString())!!
-    }
-
-    override fun getVersion(): Array<String> {
-        logger.debug("VersionInfo.getVersion()")
-        val list = mutableListOf("nwt version 0.0.3")
-
-        this.javaClass.getResourceAsStream("/version.properties").use { input ->
-            val props = Properties()
-            props.load(input)
-            props.map { (key, value) ->
-                logger.info("{}={}", key, value)
-                "$key=$value"
-            }.toCollection(list)
-        }
-
-        return list.toTypedArray()
-    }
-}

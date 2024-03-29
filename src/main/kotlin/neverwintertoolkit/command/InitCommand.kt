@@ -1,7 +1,7 @@
 package neverwintertoolkit.command
 
 import neverwintertoolkit.Nwt
-import neverwintertoolkit.extractExtension
+import neverwintertoolkit.extractExtension1
 import neverwintertoolkit.globalSettings
 import neverwintertoolkit.isDirEmpty
 import picocli.CommandLine
@@ -68,7 +68,7 @@ class InitCommand : BaseCommand() {
             val modName = target.name
             val sdir = globalSettings.substitueVariables(target.parent.toString())
             one.source = sdir + File.separator + modName
-            val (name, ext) = extractExtension(modName)
+            val (name, ext) = extractExtension1(modName)
 
             // don't target nwnRoot folder, redirect to nwnHome
             val tdir = if (sdir.contains("\${nwnRoot}")) "\${nwnHome}" + File.separator + "modules" else sdir
