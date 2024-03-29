@@ -14,7 +14,7 @@ import kotlin.system.exitProcess
 @Command(
     name = "nwt",
     mixinStandardHelpOptions = true,
-    description = ["Neverwinter Nights Toolkit version 0.0.3"],
+    description = ["Neverwinter Nights Toolkit version 0.0.4"],
     subcommands = [ErfCommand::class, GffCommand::class, TestCommand::class,
         CleanCommand::class, CompileCommand::class, InstallCommand::class,
         BuildCommand::class, UnpackCommand::class, InitCommand::class, ListCommand::class, ExtractCommand::class,
