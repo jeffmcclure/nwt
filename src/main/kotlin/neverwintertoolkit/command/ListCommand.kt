@@ -25,7 +25,7 @@ class ListCommand : BaseCommand() {
     @CommandLine.Parameters(index = "1", description = ["pattern"], arity = "0..")
     var patterns: List<String>? = null
 
-    @CommandLine.Option(names = ["a", "-a"], required = false, description = ["print archive name on each line when listing contents"])
+    @CommandLine.Option(names = ["-a"], required = false, description = ["print archive name on each line when listing contents"])
     var aOption = false
 
     override fun called(): Int {

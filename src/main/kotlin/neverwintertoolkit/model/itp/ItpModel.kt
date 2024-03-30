@@ -58,6 +58,11 @@ class ItpMAIN {
     @get:JsonProperty("DeleteMe")
     @set:JsonProperty("DeleteMe")
     var deleteMe: String? = null
+
+    @get:NwnField(name = "TYPE", type = "BYTE")
+    @get:JsonProperty("TYPE")
+    @set:JsonProperty("TYPE")
+    var tYPE: UByte? = null
 }
 
 class ItpSome {
@@ -96,4 +101,9 @@ class ItpSome {
     @get:JsonProperty("LIST")
     @set:JsonProperty("LIST")
     var lIST: List<ItpSome>? = null
+
+    @get:NwnField(name = "DELETE_ME", type = "CExoString")
+    @get:JsonProperty("DELETEME")
+    @set:JsonProperty("DELETEME")
+    var dELETEME: String? = null
 }

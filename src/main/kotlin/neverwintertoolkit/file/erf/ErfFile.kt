@@ -66,8 +66,18 @@ class ErfFile(val file: Path, val globalOptions: GlobalOptions = GlobalOptions()
             out.println("No matching files" + if (printArchiveName) " ${file.name}" else "")
             return
         }
-        val header = listOf("FileName", "Size")
-        val lll2 = list2.map { listOf(it.first, it.second) }.toMutableList()
+        val header =
+            if (printArchiveName)
+                listOf("FileName", "Size", "archive")
+            else
+                listOf("FileName", "Size")
+
+        val lll2 =
+            if (printArchiveName)
+                list2.map { listOf(it.first, it.second, file.name) }.toMutableList()
+            else
+                list2.map { listOf(it.first, it.second) }.toMutableList()
+
         lll2.add(0, header)
         printTable(lll2)
     }
