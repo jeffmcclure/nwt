@@ -3,6 +3,9 @@ package neverwintertoolkit.con
 import org.junit.jupiter.api.Test
 import neverwintertoolkit.globalSettings
 import neverwintertoolkit.model.dlg.Dlg
+import neverwintertoolkit.model.dlg.DlgSorter
+import neverwintertoolkit.readPart
+import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -11,6 +14,36 @@ import kotlin.test.Ignore
 
 class ConTest : BaseTest() {
     private val logger = org.slf4j.LoggerFactory.getLogger(this::class.java)!!
+
+    @Test
+    fun con_cain() {
+        testDlgPart("/con/con_cain.dlg.json5", "/con/con_cain.dlg-part.json5")
+    }
+
+    @Test
+    fun con_adria() {
+        testDlgPart("/con/con_adria.dlg.json5", "/con/con_adria.dlg-part.json5")
+    }
+
+    fun testDlgPart(dlg: String, dlgs: String) {
+        val adriaUrl: URL = this::class.java.getResource(dlg)!!
+        val adria: Dlg = Dlg.factory.parseJson(adriaUrl)
+
+        val res: URL = this::class.java.getResource(dlgs)!!
+        readPart(adria, res)
+
+        val path = Paths.get("build").resolve("out.dlg.json5")
+        adria.writeJson(path)
+
+        val outGff = Paths.get("build").resolve("out.dlg")
+        adria.writeGff(outGff)
+
+        val sorted = DlgSorter(adria).sorted().toJson()
+//        println(DlgSorter(adria).sorted().toJson())
+        Paths.get("build").resolve("sorted.json5").writeText(sorted)
+
+        println()
+    }
 
     @Test
     fun dev2() {

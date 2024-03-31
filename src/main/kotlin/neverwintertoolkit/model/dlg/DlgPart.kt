@@ -22,13 +22,14 @@ open class DlgsNpcResponse {
     @get:JsonIgnore
     @set:JsonIgnore
     var index: Int? = null
+    var responseId: String? = null
     var npcSays: String? = null
     var appearIfScript: String? = null
     var onAppearScript: String? = null
-    var sound: String? = null
+    var onAppearSound: String? = null
     var userChoices: ArrayList<DlgsPcChoice>? = null
     override fun toString(): String {
-        return "DlgSimpResponse(npcSays=$npcSays, appearIfScript=$appearIfScript, onAppearScript=$onAppearScript, sound=$sound, userChoices=$userChoices, index=$index)"
+        return "DlgsNpcResponse(index=$index, responseId=$responseId, npcSays=$npcSays, appearIfScript=$appearIfScript, onAppearScript=$onAppearScript, onAppearSound=$onAppearSound, userChoices=$userChoices)"
     }
 }
 
@@ -37,6 +38,7 @@ class DlgsPcChoice {
     @get:JsonIgnore
     @set:JsonIgnore
     var index: Int? = null
+    var includeResponseId: String? = null
     var userSays: String? = null
     var appearIfScript: String? = null
     var onSelectScript: String? = null

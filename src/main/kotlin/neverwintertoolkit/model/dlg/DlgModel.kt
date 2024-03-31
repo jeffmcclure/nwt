@@ -1,6 +1,7 @@
 package neverwintertoolkit.model.dlg
 
 // Generated 2024-02-01T15:21:55.550017
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import neverwintertoolkit.file.gff.CExoLocString
@@ -86,6 +87,10 @@ class DlgEntry {
 //    "Animation" : 0,
 //    "Delay" : 4294967295,
 
+    @get:JsonIgnore
+    @set:JsonIgnore
+    var responseId: String?=null
+
     @get:JsonProperty("EntryIndex")
     @set:JsonProperty("EntryIndex")
     var entryIndex: Int? = null
@@ -115,7 +120,8 @@ class DlgEntry {
     @set:JsonProperty("Comment")
     var comment: String? = null
 
-    @get:NwnField(name = "AnimLoop", type = "BYTE", gffOrder = 3, defaultValue = "1", blankBehavior = BlankBehavior.DEFAULT_VALUE)
+//    @get:NwnField(name = "AnimLoop", type = "BYTE", gffOrder = 3, defaultValue = "1", blankBehavior = BlankBehavior.DEFAULT_VALUE)
+    @get:NwnField(name = "AnimLoop", type = "BYTE", gffOrder = 3)
     @get:JsonProperty("AnimLoop")
     @set:JsonProperty("AnimLoop")
     var animLoop: UByte? = null
@@ -192,6 +198,10 @@ class DlgFoo {
 
 @JsonPropertyOrder(value = ["ReplyIndex"])
 class DlgReply {
+
+    @get:JsonIgnore
+    @set:JsonIgnore
+    var includeResponseId: String?=null
 
     @get:JsonProperty("ReplyIndex")
     @set:JsonProperty("ReplyIndex")

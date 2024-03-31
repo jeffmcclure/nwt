@@ -18,7 +18,6 @@ import neverwintertoolkit.model.dlg.Dlgs
 import neverwintertoolkit.model.dlg.DlgsPcChoice
 import neverwintertoolkit.model.dlg.DlgSorter
 import neverwintertoolkit.model.dlg.DlgStarting
-import java.lang.RuntimeException
 import java.net.URL
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -27,6 +26,7 @@ import java.nio.file.Paths
 import java.util.ArrayList
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.RuntimeException
 import kotlin.io.path.exists
 import kotlin.io.path.getLastModifiedTime
 import kotlin.io.path.isDirectory
@@ -224,23 +224,6 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
 
 }
 
-fun patchIn(first: DlgReply, userChoiceList: MutableList<DlgsPcChoice>, adria: Dlg, obj: DlgsNpcResponse) {
-    val userChoice = userChoiceList.firstOrNull { it.index == first.replyIndex!! }
-
-    val foo = DlgFoo()
-    foo.index = first.replyIndex!!.toUInt()
-    foo.active = userChoice?.appearIfScript
-
-    val found: DlgStarting = adria.startingList!!.firstOrNull {
-        (it.active ?: "") == (obj.appearIfScript ?: "") && // allow blank to match null
-                adria.entryList!![it.index!!.toInt()].text?.strings?.first()?.string == obj.npcSays
-    } ?: throw RuntimeException("Could not find NPC starting statement '${obj.npcSays}' with active='${obj.appearIfScript}'")
-
-    val foo2 = adria.entryList!![found.index!!.toInt()]
-    foo2.repliesList = foo2.repliesList!! + listOf(foo)
-}
-
-
 fun readPart(adria: Dlg, res: URL) {
     val mapper = getBaseMapper()
     val root = mapper.readValue(res, Dlgs::class.java)
@@ -252,6 +235,7 @@ fun readPart(adria: Dlg, res: URL) {
     var replyNum = adria.replyList!!.size
 
     fun flatten(obj: DlgsNpcResponse) {
+        npc.add(obj)
         obj.userChoices?.let { userList: ArrayList<DlgsPcChoice> ->
             userList.forEach { aUser ->
                 pc.add(aUser)
@@ -259,7 +243,6 @@ fun readPart(adria: Dlg, res: URL) {
             }
             userList.forEach { user ->
                 user.response?.let { response: DlgsNpcResponse ->
-                    npc.add(response)
                     response.index = entryNum++
                     flatten(response)
                 }
@@ -267,6 +250,12 @@ fun readPart(adria: Dlg, res: URL) {
         }
     }
 
+    // find root in dlg we are merging into
+    val foo2: DlgEntry = adria.entryList!!.firstOrNull {
+        it.text?.strings?.first()?.string == root.npcSays
+    } ?: throw RuntimeException("Could not find NPC starting statement '${root.npcSays}' with active='${root.appearIfScript}'")
+
+    root.index = adria.entryList!!.indexOf(foo2)
     flatten(root)
 
     fun List<DlgsNpcResponse>.toEntryList(): List<DlgEntry> {
@@ -275,6 +264,7 @@ fun readPart(adria: Dlg, res: URL) {
                 val str = CExoLocString(response.npcSays!!)
                 e.text = str
                 e.script = response.onAppearScript
+                e.responseId = response.responseId
                 e.repliesList = response.userChoices?.map { dlgUserChoice ->
                     val dlgFoo = DlgFoo()
                     dlgFoo.active = dlgUserChoice.appearIfScript
@@ -289,22 +279,50 @@ fun readPart(adria: Dlg, res: URL) {
     fun List<DlgsPcChoice>.toReplyList(): List<DlgReply> {
         return this.map { xxx: DlgsPcChoice ->
             DlgReply().also { e ->
+                val text = xxx.userSays
                 e.text = CExoLocString(xxx.userSays!!)
                 e.script = xxx.onSelectScript
-                xxx.response?.let { response: DlgsNpcResponse ->
-                    val foo = DlgFoo()
-                    foo.active = response.appearIfScript
-                    foo.index = response.index?.toUInt()
-                    foo.isChild = false
-                    e.entriesList = listOf(foo)
+                if (xxx.includeResponseId != null) {
+                    e.includeResponseId = xxx.includeResponseId
+                } else {
+                    xxx.response?.let { response: DlgsNpcResponse ->
+                        val foo = DlgFoo()
+                        foo.active = response.appearIfScript
+                        foo.index = response.index?.toUInt()
+                        foo.isChild = false
+                        e.entriesList = listOf(foo)
+                    }
                 }
             }
         }
     }
 
     val npcEntryList = npc.toEntryList()
-    adria.entryList = adria.entryList!! + npcEntryList
     val pcReplyList = pc.toReplyList()
+
+    pcReplyList.filter { it.includeResponseId != null }.forEach { reply: DlgReply ->
+        val one: DlgsNpcResponse = npc.first { it.responseId == reply.includeResponseId }
+
+        val foo = DlgFoo()
+        foo.isChild = true
+        foo.index = one.index?.toUInt()
+        foo.active = one.appearIfScript
+
+        reply.entriesList = listOf(foo)
+    }
+
+    pcReplyList.filter { it.includeResponseId != null }.forEach { reply: DlgReply ->
+        val one: DlgsNpcResponse = npc.first { it.responseId == reply.includeResponseId }
+
+        val foo = DlgFoo()
+        foo.isChild = true
+        foo.index = one.index?.toUInt()
+        foo.active = one.appearIfScript
+
+        reply.entriesList = listOf(foo)
+    }
+
+    adria.entryList = adria.entryList!! + npcEntryList.drop(1)
     adria.replyList = adria.replyList!! + pcReplyList
 
     var index = 0
@@ -316,4 +334,30 @@ fun readPart(adria: Dlg, res: URL) {
         patchIn(pcReplyList[index], pc, adria, root)
     }
 
+}
+
+fun patchIn(first: DlgReply, userChoiceList: MutableList<DlgsPcChoice>, adria: Dlg, obj: DlgsNpcResponse) {
+    val userChoice = userChoiceList.firstOrNull { it.index == first.replyIndex!! }
+
+    val foo = DlgFoo()
+    foo.index = first.replyIndex!!.toUInt()
+    foo.active = userChoice?.appearIfScript
+
+    // look for top-level starting entry nodes
+    val index = adria.startingList!!.firstOrNull {
+        (it.active ?: "") == (obj.appearIfScript ?: "") && // allow blank to match null
+                adria.entryList!![it.index!!.toInt()].text?.strings?.first()?.string == obj.npcSays
+    }?.index?.toInt() ?: adria.replyList!!.firstNotNullOfOrNull {
+        it.entriesList?.firstOrNull { dlgFoo: DlgFoo ->
+            (dlgFoo.active ?: "") == (obj.appearIfScript ?: "") && // allow blank to match null
+                    adria.entryList!![dlgFoo.index!!.toInt()].text?.strings?.first()?.string == obj.npcSays
+        }
+    }?.index?.toInt() ?: throw RuntimeException("Could not find NPC starting statement '${obj.npcSays}' with active='${obj.appearIfScript}'")
+
+//    val foo5: DlgEntry = adria.entryList!!.firstOrNull {
+//        it.text?.strings?.first()?.string == obj.npcSays
+//    } ?: throw RuntimeException("Could not find NPC starting statement '${obj.npcSays}' with active='${obj.appearIfScript}'")
+
+    val foo2 = adria.entryList!![index]
+    foo2.repliesList = foo2.repliesList!! + listOf(foo)
 }

@@ -21,27 +21,6 @@ import kotlin.test.Test
 @Ignore
 class ScratchRunner : BaseTest() {
 
-    @Test
-    fun json22() {
-        val adriaUrl: URL = this::class.java.getResource("/con_adria.dlg.json5")!!
-        val adria: Dlg = Dlg.factory.parseJson(adriaUrl)
-
-        val res: URL = this::class.java.getResource("/con_adria.dlg-part.json5")!!
-        readPart(adria, res)
-
-        val path = Paths.get("build").resolve("out.dlg.json5")
-        adria.writeJson(path)
-
-        val outGff = Paths.get("build").resolve("out.dlg")
-        adria.writeGff(outGff)
-
-        val sorted = DlgSorter(adria).sorted().toJson()
-//        println(DlgSorter(adria).sorted().toJson())
-        Paths.get("build").resolve("sorted.json5").writeText(sorted)
-
-        println()
-    }
-
     var yes = true
 
     @Test
