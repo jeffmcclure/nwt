@@ -140,17 +140,6 @@ class ErfWriter(val options: GlobalOptions = GlobalOptions(), strings: List<AStr
         }
     }
 
-
-    class ErfHeaderJson {
-        var fileType: String? = null
-        var version: String? = null
-        var languageCount: Int? = null
-        var entryCount: Int? = null
-        var localizedStringSize: Int? = null
-        var buildDate: String? = null
-        var strings: MutableList<AString> = mutableListOf()
-    }
-
     data class ErfHeader(
         var fileType: ErfFileType,
         var fileVersion: ErfFileVersion,
@@ -182,10 +171,7 @@ class ErfWriter(val options: GlobalOptions = GlobalOptions(), strings: List<AStr
     }
 
     private fun writeHeaderToFile(out: OutputStream, header: ErfHeader) {
-        //        var sum = 0
         fun write(arr: ByteArray) {
-//            sum += arr.size
-//            println("size=${arr.size}, sum=${sum}")
             out.write(arr)
         }
         write(header.fileType.strVal.toByteArray())
@@ -201,18 +187,6 @@ class ErfWriter(val options: GlobalOptions = GlobalOptions(), strings: List<AStr
         write(header.descriptionStrRef.toBytes())
         write(ByteArray(116))
     }
-
-//    fun setErfJson(erfJsonFile: Path) {
-//        if (!erfJsonFile.isRegularFile()) {
-//            if (!erfJsonFile.exists())
-//                throw RuntimeException("$erfJsonFile does not exist")
-//            else
-//                throw RuntimeException("$erfJsonFile is not a regular file")
-//        }
-//
-//        erfJson = getBaseMapper().readValue(erfJsonFile.toFile(), ErfHeaderJson::class.java)
-//        logger.debug("erfJson = {}", getBaseMapper().writeValueAsString(erfJson))
-//    }
 
     companion object {
         val logger = org.slf4j.LoggerFactory.getLogger(this::class.java)!!
