@@ -4,6 +4,7 @@
     "target": "${nwnHome}/modules/lot_1_7_2.mod",
     "name": "Lord of Terror 1.7",
     "description": "The Lord of Terror 1.7",
+    "version": "0.0.0",
     "url": "https://google.com/",
     "author": "Jeff McClure <jeff.mcclure.jr@gmail.com>",
     "rules": {
@@ -15,6 +16,7 @@
     "target": "${nwnHome}/modules/lot_1_7_3.mod",
     "name": "Lord of Terror 1.7",
     "description": "The Lord of Terror 1.7",
+    "version": "0.0.0",
     "url": "https://google.com/",
     "author": "Jeff <jeffmcclurejr@gmail.com>",
     "rules": {

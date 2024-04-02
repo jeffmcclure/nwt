@@ -1,9 +1,10 @@
 [Return to README.md](README.md)
 
-# 2024-03-30 Version 0.0.4
+# 2024-04-02 Version 0.0.4
 * Add support for simplified dialog source code format
 * ListCommand -a support
-* ListCommand i 
+* New field 'version' in nwt.json
+* Populate nwt fields description and version into ERF file header
 
 # 2024-03-19 Version 0.0.3
 * Initial public release

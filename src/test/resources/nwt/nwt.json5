@@ -2,6 +2,7 @@
   {
     "author" : "Jane Dough<jan.dough@gmail.com>",
     "description" : "test module",
+    "description" : "0.0.0",
     "dirPath" : [ ],
     "erfPath" : [ ],
     "name" : "test module",

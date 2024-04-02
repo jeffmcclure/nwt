@@ -29,6 +29,7 @@ class Nwt {
     var target: String? = null
     var name: String? = null
     var description: String? = null
+    var version: String? = null
     var url: String? = null
     var author: String? = null
     var rules: RuleList? = null

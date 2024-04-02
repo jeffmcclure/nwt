@@ -56,7 +56,9 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
             val sfile = nwt.targetPath
             val file = Paths.get("target").resolve(sfile.name)
 
-            val strings = if (!nwt.description.isNullOrBlank()) listOf(ErfWriter.AString(nwt.description, 0)) else emptyList()
+            val strings = listOf(
+                ErfWriter.AString(((nwt.description?.plus(" ") ?: "") + (nwt.version ?: "")).trim(), 0),
+            )
             val erfFile = ErfWriter(buildCommand, strings)
 
             buildCommand.logDebug { "threadCount=${buildCommand.threadCount}" }
