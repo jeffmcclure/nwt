@@ -292,6 +292,11 @@ class Utp : GffObj {
     @get:JsonProperty("ItemList")
     @set:JsonProperty("ItemList")
     var itemList: List<UtpItem>? = null
+
+    @get:NwnField(name = "Portrait", type = "ResRef")
+    @get:JsonProperty("Portrait")
+    @set:JsonProperty("Portrait")
+    var portrait: String? = null
 }
 
 class UtpItem {

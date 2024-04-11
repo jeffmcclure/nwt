@@ -430,7 +430,7 @@ data class ErfFileEntry(
         get() = "${fileName}${fileExtension}"
 
     val fileExtension: String
-        get() = FileTypeIdMap[resType]!!.extension
+        get() = FileTypeIdMap[resType]?.extension ?: throw RuntimeException("no value for resType:'$resType' filename:'$fileName'")
 
     val fileType: FileType
         get() = FileTypeIdMap[resType]!!
