@@ -12,7 +12,7 @@ class VersionInfo : CommandLine.IVersionProvider {
 
     override fun getVersion(): Array<String> {
         logger.debug("VersionInfo.getVersion()")
-        val list = mutableListOf("nwt version 0.0.4")
+        val list = mutableListOf("nwt version 0.0.5")
 
         this.javaClass.getResourceAsStream("/version.properties").use { input ->
             val props = Properties()
