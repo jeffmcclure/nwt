@@ -13,7 +13,7 @@ fun getNwt(inputDir: File? = null): Nwt {
     return Nwt.parseJson(getNwtJsonFile(inputDir)).first()
 }
 
-fun getNwtJsonFile(inputDir: File?): Path {
+fun getNwtJsonFile(inputDir: File? = null): Path {
     val dir: Path = inputDir?.toPath() ?: Paths.get(System.getProperty("user.dir"))
     val nwtJsonFile = dir.resolve("nwt.json5")
     if (Files.exists(nwtJsonFile)) return nwtJsonFile
