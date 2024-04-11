@@ -1,0 +1,11 @@
+{
+  "CreatureList" : [ ],
+  "DoorList" : [ ],
+  "EncounterList" : [ ],
+  "List" : [ ],
+  "PlaceableList" : [ ],
+  "SoundList" : [ ],
+  "StoreList" : [ ],
+  "TriggerList" : [ ],
+  "WaypointList" : [ ]
+}

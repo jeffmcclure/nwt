@@ -1,0 +1,131 @@
+{
+  "FactionList" : [
+    {
+      "FactionGlobal" : 1,
+      "FactionName" : "PC",
+      "FactionParentID" : 4294967295
+    },
+    {
+      "FactionGlobal" : 1,
+      "FactionName" : "Hostile",
+      "FactionParentID" : 4294967295
+    },
+    {
+      "FactionGlobal" : 1,
+      "FactionName" : "Commoner",
+      "FactionParentID" : 4294967295
+    },
+    {
+      "FactionGlobal" : 1,
+      "FactionName" : "Merchant",
+      "FactionParentID" : 4294967295
+    },
+    {
+      "FactionGlobal" : 1,
+      "FactionName" : "Defender",
+      "FactionParentID" : 4294967295
+    }
+  ],
+  "RepList" : [
+    {
+      "FactionID1" : 0,
+      "FactionID2" : 1,
+      "FactionRep" : 0
+    },
+    {
+      "FactionID1" : 0,
+      "FactionID2" : 2,
+      "FactionRep" : 50
+    },
+    {
+      "FactionID1" : 0,
+      "FactionID2" : 3,
+      "FactionRep" : 50
+    },
+    {
+      "FactionID1" : 0,
+      "FactionID2" : 4,
+      "FactionRep" : 50
+    },
+    {
+      "FactionID1" : 1,
+      "FactionID2" : 1,
+      "FactionRep" : 100
+    },
+    {
+      "FactionID1" : 1,
+      "FactionID2" : 2,
+      "FactionRep" : 0
+    },
+    {
+      "FactionID1" : 1,
+      "FactionID2" : 3,
+      "FactionRep" : 0
+    },
+    {
+      "FactionID1" : 1,
+      "FactionID2" : 4,
+      "FactionRep" : 0
+    },
+    {
+      "FactionID1" : 2,
+      "FactionID2" : 1,
+      "FactionRep" : 0
+    },
+    {
+      "FactionID1" : 2,
+      "FactionID2" : 2,
+      "FactionRep" : 100
+    },
+    {
+      "FactionID1" : 2,
+      "FactionID2" : 3,
+      "FactionRep" : 50
+    },
+    {
+      "FactionID1" : 2,
+      "FactionID2" : 4,
+      "FactionRep" : 100
+    },
+    {
+      "FactionID1" : 3,
+      "FactionID2" : 1,
+      "FactionRep" : 0
+    },
+    {
+      "FactionID1" : 3,
+      "FactionID2" : 2,
+      "FactionRep" : 50
+    },
+    {
+      "FactionID1" : 3,
+      "FactionID2" : 3,
+      "FactionRep" : 100
+    },
+    {
+      "FactionID1" : 3,
+      "FactionID2" : 4,
+      "FactionRep" : 100
+    },
+    {
+      "FactionID1" : 4,
+      "FactionID2" : 1,
+      "FactionRep" : 0
+    },
+    {
+      "FactionID1" : 4,
+      "FactionID2" : 2,
+      "FactionRep" : 50
+    },
+    {
+      "FactionID1" : 4,
+      "FactionID2" : 3,
+      "FactionRep" : 100
+    },
+    {
+      "FactionID1" : 4,
+      "FactionID2" : 4,
+      "FactionRep" : 100
+    }
+  ]
+}

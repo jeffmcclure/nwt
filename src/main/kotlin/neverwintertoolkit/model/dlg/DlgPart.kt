@@ -9,12 +9,12 @@ import neverwintertoolkit.UpperCamelCaseStrategy
  */
 @JsonNaming(UpperCamelCaseStrategy::class)
 class Dlgs : DlgsNpcResponse() {
-    var endConverAbort: String? = null
-    var endConversation: String? = null
-    var preventZoomIn: Boolean = false
-    override fun toString(): String {
-        return "DlgSimpRoot(endConverAbort=$endConverAbort, endConversation=$endConversation, preventZoomIn=$preventZoomIn)"
-    }
+//    var endConverAbort: String? = null
+//    var endConversation: String? = null
+//    var preventZoomIn: Boolean = false
+//    override fun toString(): String {
+//        return "DlgSimpRoot(endConverAbort=$endConverAbort, endConversation=$endConversation, preventZoomIn=$preventZoomIn)"
+//    }
 }
 
 @JsonNaming(UpperCamelCaseStrategy::class)
@@ -42,7 +42,7 @@ class DlgsPcChoice {
     var userSays: String? = null
     var appearIfScript: String? = null
     var onSelectScript: String? = null
-    var response: DlgsNpcResponse? = null
+    var response: ArrayList<DlgsNpcResponse>? = null
     override fun toString(): String {
         return "DlgSimpUserChoice(index=$index, userSays=$userSays, appearIfScript=$appearIfScript, onSelectScript=$onSelectScript, response=$response)"
     }

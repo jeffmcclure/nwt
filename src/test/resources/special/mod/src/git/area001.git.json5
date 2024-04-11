@@ -1,0 +1,22 @@
+{
+  "AreaProperties" : {
+    "AmbientSndDay" : 63,
+    "AmbientSndDayVol" : 32,
+    "AmbientSndNight" : 63,
+    "AmbientSndNitVol" : 32,
+    "EnvAudio" : 0,
+    "MusicBattle" : 39,
+    "MusicDay" : 9,
+    "MusicDelay" : 90000,
+    "MusicNight" : 10
+  },
+  "CreatureList" : [ ],
+  "DoorList" : [ ],
+  "EncounterList" : [ ],
+  "List" : [ ],
+  "PlaceableList" : [ ],
+  "SoundList" : [ ],
+  "StoreList" : [ ],
+  "TriggerList" : [ ],
+  "WaypointList" : [ ]
+}

@@ -4,33 +4,54 @@ import org.junit.jupiter.api.Test
 import neverwintertoolkit.globalSettings
 import neverwintertoolkit.model.dlg.Dlg
 import neverwintertoolkit.model.dlg.DlgSorter
-import neverwintertoolkit.readPart
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.writeText
 import kotlin.test.Ignore
+import neverwintertoolkit.ReadPart
 
 class ConTest : BaseTest() {
     private val logger = org.slf4j.LoggerFactory.getLogger(this::class.java)!!
 
     @Test
+    fun con_cain_all() {
+        testDlgPart(
+            "/special/mod/src/dlg/con_cain.dlg.json5",
+            "/special/mod/src/dlg/con_cain.part1.dlgs.json5",
+            "/special/mod/src/dlg/con_cain.part2.dlgs.json5"
+        )
+    }
+
+    @Test
+    fun con_cain2() {
+        testDlgPart("/special/mod/src/dlg/con_cain2.dlg.json5", "/special/mod/src/dlg/con_cain.part2.dlgs.json5")
+    }
+
+    @Test
     fun con_cain() {
-        testDlgPart("/con/con_cain.dlg.json5", "/con/con_cain.dlg-part.json5")
+        testDlgPart("/special/mod/src/dlg/con_cain.dlg.json5", "/special/mod/src/dlg/con_cain.part1.dlgs.json5")
+    }
+
+    @Test
+    fun con_cain_2a() {
+        testDlgPart("/special/mod/src/dlg/con_cain.dlg.json5", "/special/mod/src/dlg/con_cain.part2.dlgs.json5")
     }
 
     @Test
     fun con_adria() {
-        testDlgPart("/con/con_adria.dlg.json5", "/con/con_adria.dlg-part.json5")
+        testDlgPart("/special/mod/src/dlg/con_adria.dlg.json5", "/special/mod/src/dlg/con_adria.part1.dlgs.json5")
     }
 
-    fun testDlgPart(dlg: String, dlgs: String) {
-        val adriaUrl: URL = this::class.java.getResource(dlg)!!
+    fun testDlgPart(dlg: String, vararg dlgs: String) {
+        val adriaUrl: URL = this::class.java.getResource(dlg) ?: throw RuntimeException("$dlg is null")
         val adria: Dlg = Dlg.factory.parseJson(adriaUrl)
 
-        val res: URL = this::class.java.getResource(dlgs)!!
-        readPart(adria, res)
+        val ress: List<URL> = dlgs.map { this::class.java.getResource(it) ?: throw RuntimeException("$it is null") }
+
+//        val res: URL = this::class.java.getResource(dlgs) ?: throw RuntimeException("$dlgs is null")
+        ReadPart().readPart(adria, *ress.toTypedArray())
 
         val path = Paths.get("build").resolve("out.dlg.json5")
         adria.writeJson(path)

@@ -2,7 +2,6 @@
   {
     "author" : "Jane Dough<jan.dough@gmail.com>",
     "description" : "test module",
-    "description" : "0.0.0",
     "dirPath" : [ ],
     "erfPath" : [ ],
     "name" : "test module",
@@ -13,6 +12,7 @@
     },
     "source" : "src/test/resources/mod/module000a.mod",
     "target" : "build/module000aa.mod",
-    "url" : "https://google.com/"
+    "url" : "https://google.com/",
+    "version" : "0.0.0"
   }
 ]

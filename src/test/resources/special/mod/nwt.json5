@@ -1,0 +1,17 @@
+[
+  {
+    "author" : "",
+    "description" : "",
+    "dirPath" : [ ],
+    "erfPath" : [ ],
+    "name" : "",
+    "overwrite" : true,
+    "rules" : {
+      "module.*" : "src",
+      "*.ncs" : "target/ncs"
+    },
+    "source" : "${nwnHome}/modules/module000.mod",
+    "target" : "${nwnHome}/modules/module000a.mod",
+    "url" : ""
+  }
+]
