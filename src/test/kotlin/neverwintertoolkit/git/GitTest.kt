@@ -1,6 +1,6 @@
 package neverwintertoolkit.git
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import neverwintertoolkit.JsonSettings
 import neverwintertoolkit.con.BaseTest
 import neverwintertoolkit.file.gff.GffFactory

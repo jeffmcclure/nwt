@@ -1,6 +1,6 @@
 package neverwintertoolkit.key
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import neverwintertoolkit.command.NwtCommand
 import neverwintertoolkit.con.BaseTest
 import neverwintertoolkit.globalSettings
@@ -8,16 +8,19 @@ import picocli.CommandLine
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.nio.file.Paths
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
 class KeyFileTest : BaseTest() {
     private val logger = org.slf4j.LoggerFactory.getLogger(this::class.java)!!
 
+    val nwnRoot = Paths.get(System.getProperty("user.home"))
+        .resolve("Library/Application Support/Steam/steamapps/common/Neverwinter Nights")
 
     @Test
     fun one1() {
         test(
-            "l", Paths.get(globalSettings.nwnRoot)
+            "l", nwnRoot
                 .resolve("data")
                 .resolve("base_scripts.bif").toString()
         )
@@ -25,7 +28,7 @@ class KeyFileTest : BaseTest() {
 
     @Test
     fun one2() {
-        val key = Paths.get(globalSettings.nwnRoot)
+        val key = nwnRoot
             .resolve("data")
             .resolve("nwn_base.key").toString()
 //        test("l", "-v", key, "data/sounds.bif")

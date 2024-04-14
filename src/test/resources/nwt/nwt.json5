@@ -2,7 +2,6 @@
   {
     "author" : "Jane Dough<jan.dough@gmail.com>",
     "description" : "test module",
-    "dirPath" : [ ],
     "erfPath" : [ ],
     "name" : "test module",
     "overwrite" : false,
@@ -11,7 +10,7 @@
       "*.ncs" : ""
     },
     "source" : "src/test/resources/mod/module000a.mod",
-    "target" : "build/module000aa.mod",
+    "target" : "${nwnHome}/module000aa_${version}.mod",
     "url" : "https://google.com/",
     "version" : "0.0.0"
   }

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import java.io.PrintStream
+import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -20,7 +21,7 @@ import kotlin.system.exitProcess
 /**
  * Don't put any defaults in the constructor/default values that could ever fail
  */
-data class GlobalSettings(
+data class GlobalSettings constructor(
     var simplifyJson: Boolean = true,
     var useJson5Extension: Boolean = true,
     var nwnRoot: String = "",
@@ -81,15 +82,19 @@ data class GlobalSettings(
         }
 
         fun readConfig(): GlobalSettings {
-            val dir = configPath.parent
-
-            if (Files.notExists(configPath)) {
-                println("config file '$configPath' does not exist.   Use 'nwt config init'")
-                exitProcess(1)
-//                throw Exception("config file '$configPath' does not exist.   Use 'nwt config init'")
+            this::class.java.getResource("/nwt-config-test.json5")?.let { url: URL ->
+                println("reading nwt-config-test.json5 from classpath")
+                val logger = org.slf4j.LoggerFactory.getLogger(this::class.java)!!
+                logger.info("reading nwt-config-test.json5 from classpath")
+                return getMyMapper().readValue(url, GlobalSettings::class.java)
             }
 
-            return getMyMapper().readValue(Files.newBufferedReader(configPath), GlobalSettings::class.java)
+            if (Files.exists(configPath)) {
+                return getMyMapper().readValue(Files.newBufferedReader(configPath), GlobalSettings::class.java)
+            } else {
+                println("config file '$configPath' does not exist.   Use 'nwt config init'")
+                exitProcess(1)
+            }
         }
 
         val configPath = Paths.get(System.getProperty("user.home"), ".config", "nwt", "nwt-config.json5")

@@ -1,0 +1,8 @@
+{
+  "nwnHome" : "build/NeverwinterNights",
+  "nwnRoot" : "build/NeverwinterNights2",
+  "scriptCompilerBinary" : "nwn_script_comp",
+  //"scriptCompilerBinary" : "nwnsc",
+  "simplifyJson" : true,
+  "useJson5Extension" : true
+}

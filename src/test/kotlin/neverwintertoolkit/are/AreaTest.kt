@@ -1,6 +1,6 @@
 package neverwintertoolkit.are
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import neverwintertoolkit.con.BaseTest
 import neverwintertoolkit.file.gff.GffFile
 import neverwintertoolkit.model.are.Are

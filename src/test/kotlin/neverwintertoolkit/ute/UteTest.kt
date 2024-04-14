@@ -1,6 +1,6 @@
 package neverwintertoolkit.ute
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import neverwintertoolkit.con.BaseTest
 import java.nio.file.Path
 import kotlin.test.Ignore

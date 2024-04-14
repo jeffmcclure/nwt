@@ -1,6 +1,6 @@
 package neverwintertoolkit.con
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import neverwintertoolkit.command.gff.GffOptions
 import neverwintertoolkit.file.gff.GffFile
 import java.io.PrintStream

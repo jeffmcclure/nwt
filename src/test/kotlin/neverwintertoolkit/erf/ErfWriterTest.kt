@@ -1,6 +1,6 @@
 package neverwintertoolkit.erf
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import neverwintertoolkit.command.GlobalOptions
 import neverwintertoolkit.con.BaseTest
 import neverwintertoolkit.file.erf.ErfFile

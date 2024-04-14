@@ -1,6 +1,6 @@
 package neverwintertoolkit
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import neverwintertoolkit.command.InitCommand
 import neverwintertoolkit.command.Unpack
 import neverwintertoolkit.command.UnpackCommand

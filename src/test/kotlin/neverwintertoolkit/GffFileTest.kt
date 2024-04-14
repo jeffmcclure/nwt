@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.IntNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import neverwintertoolkit.command.gff.GffCommand
 import neverwintertoolkit.command.gff.GffOptions
 import neverwintertoolkit.con.BaseTest

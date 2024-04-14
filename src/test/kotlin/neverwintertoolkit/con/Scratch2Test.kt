@@ -1,6 +1,6 @@
 package neverwintertoolkit.con
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import neverwintertoolkit.model.dlg.Dlg
 import neverwintertoolkit.JsonSettings
 import org.slf4j.event.Level

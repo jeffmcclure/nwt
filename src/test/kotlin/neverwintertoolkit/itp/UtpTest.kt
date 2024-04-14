@@ -1,6 +1,6 @@
 package neverwintertoolkit.itp
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import neverwintertoolkit.con.BaseTest
 import java.nio.file.Path
 

@@ -1,6 +1,6 @@
 package neverwintertoolkit.command
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import neverwintertoolkit.command.gff.GffCommand
 import neverwintertoolkit.con.BaseTest
 import picocli.CommandLine

@@ -35,14 +35,14 @@ class Nwt {
     var rules: RuleList? = null
     var overwrite: Boolean = false
     var erfPath: List<String> = emptyList()
-    var dirPath: List<String> = emptyList()
+//    var dirPath: List<String> = emptyList()
 
     @get:JsonIgnore
     val sourcePath: Path
         get() {
             val sfile = source ?: throw RuntimeException("source attribute required in nwt.json")
             if (sfile.isBlank()) throw RuntimeException("source attribute required in nwt.json")
-            return Paths.get(globalSettings.expandVariables(sfile))
+            return Paths.get(expandVariables(globalSettings.expandVariables(sfile)))
         }
 
     @get:JsonIgnore
@@ -50,8 +50,14 @@ class Nwt {
         get() {
             val sfile = target ?: throw RuntimeException("target attribute required in nwt.json")
             if (sfile.isBlank()) throw RuntimeException("target attribute required in nwt.json")
-            return Paths.get(globalSettings.expandVariables(sfile))
+            return Paths.get(expandVariables(globalSettings.expandVariables(sfile)))
         }
+
+    fun expandVariables(sfile: String): String {
+        return version?.let { version ->
+            sfile.replace("\${version}", version.replace('.', '_'))
+        } ?: sfile
+    }
 
     fun toJson(nwtCfg: Path) {
         val mapper = getMapper(JsonSettings(exclude = setOf(XListDeserializer::class, XListSerializer::class)))

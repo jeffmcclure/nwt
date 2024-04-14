@@ -1,10 +1,12 @@
 package neverwintertoolkit
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import neverwintertoolkit.command.Unpack
 import neverwintertoolkit.con.BaseTest
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.pathString
+import kotlin.test.assertEquals
 
 class NwtTest : BaseTest() {
 
@@ -13,6 +15,13 @@ class NwtTest : BaseTest() {
         val file = getFile()
         Nwt().toJson(file)
         Nwt.parseJson(file)
+    }
+
+    @Test
+    fun nwtVariables() {
+        val path = Paths.get("src/test/resources/nwt/nwt.json5")
+        val nwt: Nwt = Nwt.parseJson(path).first()
+        assertEquals("build/NeverwinterNights/module000aa_0_0_0.mod", nwt.targetPath.pathString)
     }
 
     @Test

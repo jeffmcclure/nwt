@@ -1,6 +1,6 @@
 package neverwintertoolkit.con
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import neverwintertoolkit.globalSettings
 import neverwintertoolkit.model.dlg.Dlg
 import neverwintertoolkit.model.dlg.DlgSorter
