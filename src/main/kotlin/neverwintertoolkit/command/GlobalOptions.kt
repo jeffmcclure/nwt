@@ -46,7 +46,8 @@ open class GlobalOptions(prints: PrintStream? = null) {
 
     fun logError(block: () -> String?) {
         if (statusLogLevel > -1) {
-            status.println(block())
+            //status.println(block())
+            System.err.println(block())
         }
     }
 

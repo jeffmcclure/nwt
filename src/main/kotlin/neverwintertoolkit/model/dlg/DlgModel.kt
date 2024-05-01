@@ -154,7 +154,7 @@ class DlgEntry {
     @get:NwnField(name = "ActionParams", type = "List", indexedStructId = true, gffOrder = 6, blankBehavior = BlankBehavior.GENERATE)
     @get:JsonProperty("ActionParams")
     @set:JsonProperty("ActionParams")
-    var actionParams: List<DlgActionParams> = emptyList()
+    var actionParams: List<DlgActionParams>? = null
 
     override fun toString(): String {
         return "DlgEntry(sound=$sound, responseId=$responseId, entryIndex=$entryIndex, repliesList=$repliesList, delay=$delay, speaker=$speaker, comment=$comment, animLoop=$animLoop, text=$text, script=$script, quest=$quest, animation=$animation, questEntry=$questEntry, actionParams=$actionParams)"

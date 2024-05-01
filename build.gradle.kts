@@ -31,11 +31,11 @@ val binDir = System.getenv("BIN_DIR")
 
 plugins {
 //    kotlin("jvm").version("1.8.22")
-    id("org.jetbrains.kotlin.jvm") version "2.0.0-Beta5"
-    id("org.jetbrains.kotlin.plugin.allopen") version "2.0.0-Beta5"
-    id("com.google.devtools.ksp") version "2.0.0-Beta5-1.0.19"
+    id("org.jetbrains.kotlin.jvm") version "2.0.0-RC1"
+    id("org.jetbrains.kotlin.plugin.allopen") version "2.0.0-RC1"
+    id("com.google.devtools.ksp") version "2.0.0-RC1-1.0.20"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.micronaut.application") version "4.3.5"
+    id("io.micronaut.application") version "4.3.8"
 
 //    id("org.jetbrains.kotlin.jvm") version "1.8.22"
 //    id("org.jetbrains.kotlin.plugin.allopen") version "1.8.22"
@@ -47,7 +47,7 @@ plugins {
     id("io.ktor.plugin") version "3.0.0-beta-1"
     id("org.ajoberstar.grgit") version "5.2.2"
 //    id("kotlinx-serialization")
-    kotlin("plugin.serialization") version "2.0.0-Beta5"
+    kotlin("plugin.serialization") version "2.0.0-RC1"
 
 }
 
@@ -82,7 +82,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
 //    implementation("io.github.microutils:kotlin-logging-jvm:4.0.0-beta-2")
-    api("ch.qos.logback:logback-classic:1.5.3")
+    api("ch.qos.logback:logback-classic:1.5.6")
 //    runtimeOnly("ch.qos.logback:logback-classic")
 
     implementation("io.github.java-diff-utils:java-diff-utils:4.12")

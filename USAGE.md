@@ -2,6 +2,13 @@
 
 Information related to using nwt for developing Neverwinter modules.
 
+body bag 0 - default
+body bag 3 - treasure
+body bag 6 - pouch
+"DecayTime" : 5000, in ms
+
+
+
 ## GFF File Types
 | Extension | Description                |
 |-----------|----------------------------|

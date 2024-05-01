@@ -18,12 +18,15 @@ import java.nio.file.Paths
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.RuntimeException
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.PathWalkOption
 import kotlin.io.path.exists
 import kotlin.io.path.getLastModifiedTime
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
+import kotlin.io.path.walk
 import kotlin.system.exitProcess
 
 class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand: BuildCommand = BuildCommand()) {
@@ -39,7 +42,7 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
 
     data class Rec(val aPath: Path, val baseName: String, val loc: String, val targetPath: Path)
 
-    @OptIn(DelicateCoroutinesApi::class)
+    @OptIn(DelicateCoroutinesApi::class, ExperimentalPathApi::class)
     fun pack() {
         targets.forEach { nwt ->
             logger.info("target = {}", nwt.targetPath)
@@ -85,9 +88,16 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
                             val pathMatcher = FileSystems.getDefault().getPathMatcher("glob:$pattern")
 
                             // sort so if the source and target are both present the .json source will be processed first
-                            theDir.listDirectoryEntries().filter { it.isRegularFile() }
+//                            val x: Sequence<Path> =
+
+                            theDir.walk(PathWalkOption.BREADTH_FIRST, PathWalkOption.INCLUDE_DIRECTORIES).filter { it.isRegularFile() }
                                 .sortedWith(compareBy<Path> { if (GffFactory.isJsonFile(it)) 0 else 1 }.thenBy { it.name.lowercase() })
-                                .mapNotNull { aPath ->
+                                .map { aPath: Path ->
+                                    aPath
+                            }.toList().mapNotNull { aPath: Path ->
+//                            theDir.listDirectoryEntries().filter { it.isRegularFile() }
+//                                .sortedWith(compareBy<Path> { if (GffFactory.isJsonFile(it)) 0 else 1 }.thenBy { it.name.lowercase() })
+//                                .mapNotNull { aPath ->
                                     val baseName = aPath.name.replace(jsonExtension, "")
                                     val matches = pathMatcher.matches(Paths.get(baseName))
                                     if (!matches) {

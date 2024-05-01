@@ -2,6 +2,7 @@
 
 # 2024-xx-xx Version 0.0.3
 * ${version} variable substitution in nwt.json5
+* enable subdirectories for source files
 
 # 2024-04-02 Version 0.0.4
 * Add support for simplified dialog source code format
