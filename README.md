@@ -103,3 +103,5 @@ Incremental compile of .nss files.  BE CAREFUL.  This will only compile changed 
 
 # Tips and Tricks
 * When importing some existing modules (nwn init), the module may contain .ncs files that are not produced during the compile phase.  Use 'nwt diff' compare original module with built module to detect this.
+
+
