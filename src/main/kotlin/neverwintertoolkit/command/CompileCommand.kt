@@ -121,10 +121,9 @@ class CompileCommand(base: BaseBuildCommand? = null) : BaseBuildCommand() {
             else -> throw RuntimeException("unexpected .nss script compiler ${compiler.name}")
 
         }
-        logInfo { cmd.toString() }
+        logDebug { cmd.toString() }
 
-
-        logInfoNo { "Compiling all .nss files..." }
+        logInfo { "Compiling all .nss files..." }
         val exitCode = runCommand(pb)
         if (!yOption && exitCode != 0) {
             nssSource.setLastModifiedTime(FileTime.fromMillis(System.currentTimeMillis()))
@@ -183,11 +182,11 @@ class CompileCommand(base: BaseBuildCommand? = null) : BaseBuildCommand() {
                 fun procOutput(): Boolean {
                     var any = false
                     if (reader.ready()) {
-                        reader.readLine()?.let { any = true; logInfo { it } }
+                        reader.readLine()?.let { any = true; logInfo { "     $it" } }
                     }
 
                     if (errorReader.ready()) {
-                        errorReader.readLine()?.let { any = true; logInfo { "Error: $it" } }
+                        errorReader.readLine()?.let { any = true; logInfo { "     Error: $it" } }
                     }
 
                     if (any)
@@ -211,7 +210,7 @@ class CompileCommand(base: BaseBuildCommand? = null) : BaseBuildCommand() {
             }
         }
         val retCode = proc.waitFor()
-        logInfo { "Done.  Compile return code = $retCode" }
+        logInfo { "Compile Done.  Compile return code = $retCode" }
         return retCode
     }
 

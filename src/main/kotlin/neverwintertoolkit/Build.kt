@@ -10,23 +10,13 @@ import neverwintertoolkit.file.gff.GffFactory
 import neverwintertoolkit.file.gff.GffObj
 import neverwintertoolkit.model.dlg.Dlg
 import neverwintertoolkit.model.dlg.DlgSorter
-import java.net.URL
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.RuntimeException
-import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.PathWalkOption
-import kotlin.io.path.exists
-import kotlin.io.path.getLastModifiedTime
-import kotlin.io.path.isDirectory
-import kotlin.io.path.isRegularFile
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.name
-import kotlin.io.path.walk
+import kotlin.io.path.*
 import kotlin.system.exitProcess
 
 class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand: BuildCommand = BuildCommand()) {
@@ -65,9 +55,10 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
                     val added = ConcurrentHashMap<String, Boolean>()
 
                     // build list of files to compile or add
-                    val autoRules: List<Pair<String, String>> = dir.resolve("src").listDirectoryEntries().filter { it.isDirectory() }.map { theDir ->
-                        Pair("*." + theDir.name, "src/${theDir.name}")
-                    }
+                    val autoRules: List<Pair<String, String>> =
+                        dir.resolve("src").listDirectoryEntries().filter { it.isDirectory() }.map { theDir ->
+                            Pair("*." + theDir.name, "src/${theDir.name}")
+                        }
 
                     val allRules = mutableListOf<Pair<String, String>>()
                     val baseRules = nwt.rules ?: emptyList()
@@ -90,11 +81,12 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
                             // sort so if the source and target are both present the .json source will be processed first
 //                            val x: Sequence<Path> =
 
-                            theDir.walk(PathWalkOption.BREADTH_FIRST, PathWalkOption.INCLUDE_DIRECTORIES).filter { it.isRegularFile() }
+                            theDir.walk(PathWalkOption.BREADTH_FIRST, PathWalkOption.INCLUDE_DIRECTORIES)
+                                .filter { it.isRegularFile() }
                                 .sortedWith(compareBy<Path> { if (GffFactory.isJsonFile(it)) 0 else 1 }.thenBy { it.name.lowercase() })
                                 .map { aPath: Path ->
                                     aPath
-                            }.toList().mapNotNull { aPath: Path ->
+                                }.toList().mapNotNull { aPath: Path ->
 //                            theDir.listDirectoryEntries().filter { it.isRegularFile() }
 //                                .sortedWith(compareBy<Path> { if (GffFactory.isJsonFile(it)) 0 else 1 }.thenBy { it.name.lowercase() })
 //                                .mapNotNull { aPath ->
@@ -131,6 +123,7 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
                     buildCommand.logDebug { "list.size=${list.size}" }
                     val list2 = list.groupBy { it.targetPath }
                     buildCommand.logDebug { "list2.size=${list2.size}" }
+                    buildCommand.logInfo { "Adding files..." }
                     list2.forEach { rec ->
                         ascope.launch {
                             logger.debug("processing of {}", rec)
@@ -144,22 +137,27 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
                 System.err.println("Exiting due to error")
                 exitProcess(3)
             }
+            buildCommand.logInfo { "" }
             status.println("Writing $file...")
             erfFile.writeErf(file)
             status.println("Done")
         }
     }
 
+    val baseFormat = "  %5d / %5d : %s %s"
+
     private suspend fun processPaths(rec: List<Rec>, index: AtomicInteger, size: Int): Path {
         rec.firstOrNull { !GffFactory.isJsonFile(it.aPath) }?.let { rec1 ->
-            buildCommand.infoSuspend { "%5d / %5d : Adding %s".format(index.incrementAndGet(), size, rec1.aPath) }
+//            buildCommand.infoSuspend { "%5d / %5d : Adding %s".format(index.incrementAndGet(), size, rec1.aPath) }
+            buildCommand.infoSuspendNo { baseFormat.format(index.incrementAndGet(), size, "Adding", rec1.aPath) }
             return rec1.aPath
         }
 
         // target artifact is the same for all
         val targ = dir.resolve("target").resolve(rec.first().loc).resolve(rec.first().baseName)
         if (targ.exists() && !rec.any { it.aPath.getLastModifiedTime() > targ.getLastModifiedTime() }) {
-            buildCommand.infoSuspend { "%5d / %5d : Adding cached %s".format(index.incrementAndGet(), size, targ) }
+//            buildCommand.infoSuspend { "%5d / %5d : Adding cached %s".format(index.incrementAndGet(), size, targ) }
+            buildCommand.infoSuspendNo { baseFormat.format(index.incrementAndGet(), size, "Adding cached", targ) }
             return targ
         }
 
@@ -188,13 +186,14 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
             val obj = processOnePath(index, size, arec, targ) as Dlg
 
 //            val dlgs: List<URL> =
-                rec.filter {
+            rec.filter {
                 it.baseName.lowercase().endsWith(".dlgs.json5") ||
                         it.baseName.lowercase().endsWith(".dlgs.json") ||
                         it.baseName.lowercase().endsWith(".dlgs")
             }.map { aaa: Rec ->
                 buildCommand.logDebug { "two" }
-                buildCommand.infoSuspend { "%5d / %5d : Compiling and adding %s".format(index.incrementAndGet(), size, aaa.aPath) }
+//                buildCommand.infoSuspendNo { "%5d / %5d : Compiling and adding %s".format(index.incrementAndGet(), size, aaa.aPath) }
+                buildCommand.infoSuspendNo { baseFormat.format( index.incrementAndGet(), size, "Compiling and adding", aaa.aPath ) }
                 ReadPart().readPart(obj, aaa.aPath.toUri().toURL())
 //                aaa.aPath.toUri().toURL()
             }
@@ -217,7 +216,8 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
         arec: Rec,
         targ: Path
     ): GffObj {
-        buildCommand.infoSuspend { "%5d / %5d : Compiling and adding %s".format(index.incrementAndGet(), size, arec.aPath) }
+//        buildCommand.infoSuspendNo { "%5d / %5d : Compiling and adding %s".format( index.incrementAndGet(), size, arec.aPath ) }
+        buildCommand.infoSuspendNo { baseFormat.format(index.incrementAndGet(), size, "Compiling and adding", arec.aPath) }
         val factory: GffFactory<out GffObj> = GffFactory.getFactoryForFileName(arec.aPath.name)
             ?: throw RuntimeException("Could not find factory for ${arec.aPath.name}")
 

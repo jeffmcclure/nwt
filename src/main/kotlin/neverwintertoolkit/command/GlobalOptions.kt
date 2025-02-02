@@ -77,6 +77,18 @@ open class GlobalOptions(prints: PrintStream? = null) {
         }
     }
 
+    suspend fun infoSuspendNo(block: () -> String) {
+        if (statusLogLevel > 0) {
+            semaphore.acquire()
+            try {
+                status.print("\r" + block())
+                status.print("\u001b[K") // ANSI escape code to clear to the end of the line
+            } finally {
+                semaphore.release()
+            }
+        }
+    }
+
     fun logDebug(block: () -> String) {
         if (statusLogLevel > 1) status.println(block())
     }
