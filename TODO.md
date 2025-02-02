@@ -1,5 +1,8 @@
-* 
-* lotcephak1-1/
+ "nwnHome" : "/home/jeffmcclure/.local/share/Neverwinter Nights",
+ "nwnRoot" : "/home/jeffmcclure/d1/SteamLibrary/steamapps/common/Neverwinter Nights",
+
+
+ * lotcephak1-1/
 * lothak-2/
 * lotwav-3/
 * 
