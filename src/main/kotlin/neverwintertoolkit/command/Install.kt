@@ -9,6 +9,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.fileSize
 import kotlin.io.path.getLastModifiedTime
 import kotlin.io.path.name
+import kotlin.io.path.notExists
 
 class Install(val nwtJson: Path, val dir: Path = nwtJson.parent, val installCommand: InstallCommand = InstallCommand()) {
 
@@ -26,6 +27,8 @@ class Install(val nwtJson: Path, val dir: Path = nwtJson.parent, val installComm
                 installCommand.logInfo { "No change" }
             } else {
                 installCommand.logInfo { "Installing $installPath..." }
+                if (installPath.parent.notExists())
+                    Files.createDirectories(installPath.parent)
                 Files.copy(compiledArtifact, installPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES)
             }
         }

@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/bash
 
 if [ -e logback.xml ]; then
     L="-Dlogback.configurationFile=$PWD/logback.xml"

@@ -70,12 +70,19 @@ class CompileCommand(base: BaseBuildCommand? = null) : BaseBuildCommand() {
 
     fun compileAll(nssSource: Path, ncsTarget: Path) {
         val cmd = mutableListOf<String>()
-        val compiler = Paths.get(globalSettings.scriptCompilerBinary)
+        val compiler: Path = Paths.get(globalSettings.scriptCompilerBinary)
 
+        cmd.add(compiler.toString())
         val pb = when (compiler.name) {
             "nwn_script_comp" -> {
                 // nwn_script_comp --verbose -d target -c src/nss
-                cmd.add("nwn_script_comp")
+                cmd.add("--root")
+                cmd.add(globalSettings.nwnRoot)
+//                --root ROOT                 Override NWN root (autodetection is attempted)
+                cmd.add("--userdirectory")
+                cmd.add(globalSettings.nwnHome)
+//                --userdirectory USERDIR
+
                 if (vOption) cmd.add("--verbose")
                 if (yOption) cmd.add("-y")
                 val nwt = Nwt.parseJson(getNwtJsonFile(dir)).first()
@@ -91,7 +98,6 @@ class CompileCommand(base: BaseBuildCommand? = null) : BaseBuildCommand() {
             }
 
             "nwnsc" -> {
-                cmd.add("nwnsc")
                 cmd.add("-co")
                 if (vOption) cmd.add("-j")
                 if (yOption) cmd.add("-y")
@@ -115,7 +121,7 @@ class CompileCommand(base: BaseBuildCommand? = null) : BaseBuildCommand() {
             else -> throw RuntimeException("unexpected .nss script compiler ${compiler.name}")
 
         }
-        logDebug { cmd.toString() }
+        logInfo { cmd.toString() }
 
 
         logInfoNo { "Compiling all .nss files..." }

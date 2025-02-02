@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter
   ./gradlew publishToMavenLocal
   ./gradlew clean build -x test
   ./gradlew dependencyUpdates
-  ./gradlew wrapper --gradle-version 8.6
+  ./gradlew wrapper --gradle-version 8.12.1
   ./gradlew build --warning-mode all -x test
   ./gradlew buildEnvironment # Show dependency tree
   g
@@ -172,7 +172,7 @@ tasks.register<Copy>("copyJarShell") {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from(layout.projectDirectory.file("src/main/scripts"))
     include("nwt")
-    //println("installing shell into " + binDir)
+    println("installing shell into " + binDir)
     into(binDir)
     filePermissions {
         user {
@@ -191,6 +191,7 @@ tasks.register<Copy>("copyJar") {
 //    rename("nwt-${version}-all.jar", "nwt-${version}.jar")
     //rename("nwt-${version}-all.jar", "nwt-${version}-jar-with-dependencies.jar")
     rename("nwt-${version}-all.jar", "nwt.jar")
+    println("installing jar into" + binDir)
     into(binDir)
     finalizedBy("copyJarShell")
 }

@@ -82,6 +82,20 @@ data class GlobalSettings constructor(
         }
 
         fun readConfig(): GlobalSettings {
+            val config = readConfigInner()
+            if (!Files.isDirectory(Paths.get(config.nwnHome))) {
+                println("nwnHome '${config.nwnHome}' does not exist or is not a directory.   Use 'nwt config init' or edit $configPath")
+                exitProcess(1)
+            }
+            if (!Files.isDirectory(Paths.get(config.nwnRoot))) {
+                println("nwnRoot '${config.nwnRoot}' does not exist or is not a directory.   Use 'nwt config init' or edit $configPath")
+                exitProcess(1)
+            }
+
+            return config
+        }
+
+        private fun readConfigInner(): GlobalSettings {
             this::class.java.getResource("/nwt-config-test.json5")?.let { url: URL ->
                 println("reading nwt-config-test.json5 from classpath")
                 val logger = org.slf4j.LoggerFactory.getLogger(this::class.java)!!
