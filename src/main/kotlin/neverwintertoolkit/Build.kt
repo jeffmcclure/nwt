@@ -148,16 +148,16 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
 
     private suspend fun processPaths(rec: List<Rec>, index: AtomicInteger, size: Int): Path {
         rec.firstOrNull { !GffFactory.isJsonFile(it.aPath) }?.let { rec1 ->
-//            buildCommand.infoSuspend { "%5d / %5d : Adding %s".format(index.incrementAndGet(), size, rec1.aPath) }
-            buildCommand.infoSuspendNo { baseFormat.format(index.incrementAndGet(), size, "Adding", rec1.aPath) }
+            buildCommand.logSuspend { baseFormat.format(index.incrementAndGet(), size, "Adding", rec1.aPath) }
             return rec1.aPath
         }
 
         // target artifact is the same for all
         val targ = dir.resolve("target").resolve(rec.first().loc).resolve(rec.first().baseName)
         if (targ.exists() && !rec.any { it.aPath.getLastModifiedTime() > targ.getLastModifiedTime() }) {
-//            buildCommand.infoSuspend { "%5d / %5d : Adding cached %s".format(index.incrementAndGet(), size, targ) }
-            buildCommand.infoSuspendNo { baseFormat.format(index.incrementAndGet(), size, "Adding cached", targ) }
+            rec.forEach {
+                buildCommand.logSuspend { baseFormat.format(index.incrementAndGet(), size, "Adding cached", targ) + " for ${it.aPath.name}" }
+            }
             return targ
         }
 
@@ -192,8 +192,9 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
                         it.baseName.lowercase().endsWith(".dlgs")
             }.map { aaa: Rec ->
                 buildCommand.logDebug { "two" }
-//                buildCommand.infoSuspendNo { "%5d / %5d : Compiling and adding %s".format(index.incrementAndGet(), size, aaa.aPath) }
-                buildCommand.infoSuspendNo { baseFormat.format( index.incrementAndGet(), size, "Compiling and adding", aaa.aPath ) }
+                buildCommand.logSuspend {
+                    baseFormat.format(index.incrementAndGet(), size, "Compiling and adding", aaa.aPath)
+                }
                 ReadPart().readPart(obj, aaa.aPath.toUri().toURL())
 //                aaa.aPath.toUri().toURL()
             }
@@ -216,8 +217,9 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
         arec: Rec,
         targ: Path
     ): GffObj {
-//        buildCommand.infoSuspendNo { "%5d / %5d : Compiling and adding %s".format( index.incrementAndGet(), size, arec.aPath ) }
-        buildCommand.infoSuspendNo { baseFormat.format(index.incrementAndGet(), size, "Compiling and adding", arec.aPath) }
+        buildCommand.logSuspend {
+            baseFormat.format(index.incrementAndGet(), size, "Compiling and adding", arec.aPath)
+        }
         val factory: GffFactory<out GffObj> = GffFactory.getFactoryForFileName(arec.aPath.name)
             ?: throw RuntimeException("Could not find factory for ${arec.aPath.name}")
 

@@ -77,12 +77,34 @@ open class GlobalOptions(prints: PrintStream? = null) {
         }
     }
 
+    suspend fun logSuspend(block: () -> String) {
+//        println("statusLogLevel: $statusLogLevel")
+        if (statusLogLevel > 1) {
+            debugSuspend ( block )
+        } else {
+            infoSuspendNo ( block )
+        }
+    }
+
     suspend fun infoSuspendNo(block: () -> String) {
         if (statusLogLevel > 0) {
             semaphore.acquire()
             try {
-                status.print("\r" + block())
-                status.print("\u001b[K") // ANSI escape code to clear to the end of the line
+//                status.print("\r" + block())
+//                status.print("\u001b[K") // ANSI escape code to clear to the end of the line
+//                status.print("\r")
+                status.print("\r${block()}\u001b[K\r")
+            } finally {
+                semaphore.release()
+            }
+        }
+    }
+
+    suspend fun debugSuspend(block: () -> String) {
+        if (statusLogLevel > 1) {
+            semaphore.acquire()
+            try {
+                status.println(block())
             } finally {
                 semaphore.release()
             }

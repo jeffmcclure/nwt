@@ -172,8 +172,8 @@ tasks.register<Copy>("copyJarShell") {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from(layout.projectDirectory.file("src/main/scripts"))
     include("nwt")
-    println("installing shell into " + binDir)
     into(binDir)
+    println("installing shell into $binDir")
     filePermissions {
         user {
             read = true
@@ -191,7 +191,7 @@ tasks.register<Copy>("copyJar") {
 //    rename("nwt-${version}-all.jar", "nwt-${version}.jar")
     //rename("nwt-${version}-all.jar", "nwt-${version}-jar-with-dependencies.jar")
     rename("nwt-${version}-all.jar", "nwt.jar")
-    println("installing jar into" + binDir)
+    println("installing jar into $binDir")
     into(binDir)
     finalizedBy("copyJarShell")
 }
