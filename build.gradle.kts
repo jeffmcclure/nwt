@@ -45,9 +45,9 @@ plugins {
 
     id("com.github.ben-manes.versions") version "0.52.0" // provides ./gradlew dependencyUpdates
     id("io.ktor.plugin") version "3.0.0"
-    id("org.ajoberstar.grgit") version "5.2.2"
+    id("org.ajoberstar.grgit") version "5.3.0"
 //    id("kotlinx-serialization")
-    kotlin("plugin.serialization") version "2.0.0-RC1"
+    kotlin("plugin.serialization") version "2.1.20-Beta2"
 
 }
 
@@ -72,7 +72,8 @@ dependencies {
     implementation("org.slf4j:slf4j-api")
 
 //    implementation("io.micronaut:micronaut-jackson-databind")
-    implementation("io.micronaut.serde:micronaut-serde-jackson")
+//    implementation("io.micronaut.serde:micronaut-serde-jackson")
+    implementation("io.micronaut.serde:micronaut-serde-jackson:2.13.1")
 //    implementation("io.micronaut.serde:micronaut-serde-jackson:2.7.0")
 
     implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
@@ -90,9 +91,9 @@ dependencies {
 //    runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
 //    implementation("com.fasterxml.jackson.core:jackson-core")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.17.0")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.18.2")
 //    implementation("com.fasterxml.jackson.core:jackson-databind:")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
 //    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.16.0-rc1")
 
     implementation("com.github.lalyos:jfiglet:0.0.9")
@@ -100,7 +101,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     implementation("javax.json:javax.json-api:1.1.4")
     testImplementation(kotlin("test"))
-//    implementation("io.micronaut.serde:micronaut-serde-jackson:2.3.3")
 }
 
 application {

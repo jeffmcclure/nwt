@@ -5,6 +5,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.runBlocking
 import neverwintertoolkit.command.BuildCommand
+import neverwintertoolkit.command.NwtCommand.Companion.startTime
 import neverwintertoolkit.file.erf.ErfWriter
 import neverwintertoolkit.file.gff.GffFactory
 import neverwintertoolkit.file.gff.GffObj
@@ -18,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.io.path.*
 import kotlin.system.exitProcess
+import kotlin.time.Duration.Companion.milliseconds
 
 class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand: BuildCommand = BuildCommand()) {
 
@@ -140,7 +142,7 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
             buildCommand.logInfo { "" }
             status.println("Writing $file...")
             erfFile.writeErf(file)
-            status.println("Done")
+            buildCommand.logInfo { "Done in " + (System.currentTimeMillis() - startTime).milliseconds.toString() }
         }
     }
 
@@ -156,7 +158,14 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
         val targ = dir.resolve("target").resolve(rec.first().loc).resolve(rec.first().baseName)
         if (targ.exists() && !rec.any { it.aPath.getLastModifiedTime() > targ.getLastModifiedTime() }) {
             rec.forEach {
-                buildCommand.logSuspend { baseFormat.format(index.incrementAndGet(), size, "Adding cached", targ) + " for ${it.aPath.name}" }
+                buildCommand.logSuspend {
+                    baseFormat.format(
+                        index.incrementAndGet(),
+                        size,
+                        "Adding cached",
+                        targ
+                    ) + " for ${it.aPath.name}"
+                }
             }
             return targ
         }
