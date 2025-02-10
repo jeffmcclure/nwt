@@ -31,14 +31,11 @@ class NwtCommand {
         val startTime = System.currentTimeMillis()
         var loggerContext = org.slf4j.LoggerFactory.getILoggerFactory()
         private val logger = loggerContext.getLogger(NwtCommand::class.toString())
+        var lastCommand: BaseCommand? = null
     }
 }
 
 fun main(args: Array<String>) {
     val exitCode = CommandLine(NwtCommand()).execute(*args)
-    val endTime = System.currentTimeMillis()
-
-//    GlobalOptions().logInfo { "xDone in " + (endTime - startTime).milliseconds.toString() }
-    exitProcess(exitCode)
+    NwtCommand.lastCommand?.logInfo { "Done in " + (System.currentTimeMillis() - startTime).milliseconds.toString() }; exitProcess(exitCode)
 }
-

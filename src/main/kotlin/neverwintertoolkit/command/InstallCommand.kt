@@ -28,6 +28,7 @@ class InstallCommand(base: BaseBuildCommand? = null) : BaseBuildCommand() {
             BuildCommand(this).call()
         }
         Install(file, installCommand = this).install()
+        NwtCommand.lastCommand = this
         return 0
     }
 }

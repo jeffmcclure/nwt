@@ -142,7 +142,8 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
             buildCommand.logInfo { "" }
             status.println("Writing $file...")
             erfFile.writeErf(file)
-            buildCommand.logInfo { "Done in " + (System.currentTimeMillis() - startTime).milliseconds.toString() }
+//            status.println("Done")
+//            buildCommand.logInfo { "Done in " + (System.currentTimeMillis() - startTime).milliseconds.toString() }
         }
     }
 

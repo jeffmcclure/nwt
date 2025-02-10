@@ -34,6 +34,7 @@ class BuildCommand(base: BaseBuildCommand? = null) : BaseBuildCommand() {
         logDebug { "threadCount=$threadCount" }
         val file = getNwtJsonFile(dir)
         Build(file, buildCommand = this).pack()
+        NwtCommand.lastCommand = this
         return 0
     }
 }
