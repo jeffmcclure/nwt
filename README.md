@@ -84,6 +84,9 @@ $ git commit -m'Initial'
 | nwt erf -h                                        | help for erf command                            |
 | nwt erf l -h                                      | help for sub-command l of erf command           |
 
+nwt x -O '/Users/jeffmcclure/Library/Application Support/Steam/steamapps/common/Neverwinter Nights/data/nwn_base.key' 'nw_i0_tool.*'
+nwt l '/Users/jeffmcclure/Library/Application Support/Steam/steamapps/common/Neverwinter Nights/data/nwn_base.key'
+
 ### Incremental Compile
 Incremental compile of .nss files.  BE CAREFUL.  This will only compile changed files.  However, .nss files can include other files, and if an included file has changed all files that include that file must also be compiled, and -i will fail to detect this.  Only use this when you are certain there are no changed included files.
 
