@@ -2992,7 +2992,7 @@ class GitTrigger {
     @set:JsonProperty("TrapDisarmable")
     var trapDisarmable: UByte? = null
 
-    @get:NwnField(name = "OnClick", type = "ResRef")
+    @get:NwnField(name = "OnClick", type = "ResRef", blankBehavior = neverwintertoolkit.model.annotation.BlankBehavior.DEFAULT_VALUE)
     @get:JsonProperty("OnClick")
     @set:JsonProperty("OnClick")
     var onClick: String? = null

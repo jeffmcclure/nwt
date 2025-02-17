@@ -155,12 +155,20 @@ open class GffAnnotationWriter constructor(val gffObj: GffObj) : GffWriterBase()
                     GffFile.GffFieldType.DOUBLE -> createFieldDouble(value.getter.call(obj1) as Double?, nwnField.name)
 
                     GffFile.GffFieldType.CExoString -> createFieldCExoString(
-                        (value.getter.call(obj1) as String?) ?: if (nwnField.blankBehavior == BlankBehavior.GENERATE) "" else null,
+                        (value.getter.call(obj1) as String?) ?: when (nwnField.blankBehavior) {
+                            BlankBehavior.GENERATE -> ""
+                            BlankBehavior.DEFAULT_VALUE -> nwnField.defaultValue
+                            else -> null
+                        },
                         nwnField.name
                     )
 
                     GffFile.GffFieldType.ResRef -> createFieldResRef(
-                        (value.getter.call(obj1) as String?) ?: if (nwnField.blankBehavior == BlankBehavior.GENERATE) "" else null,
+                        (value.getter.call(obj1) as String?) ?: when (nwnField.blankBehavior) {
+                            BlankBehavior.GENERATE -> ""
+                            BlankBehavior.DEFAULT_VALUE -> nwnField.defaultValue
+                            else -> null
+                        },
                         nwnField.name
                     )
 
