@@ -2055,7 +2055,7 @@ class GitPlaceable {
     @set:JsonProperty("TemplateResRef")
     var templateResRef: String? = null
 
-    @get:NwnField(name = "Description", type = "CExoLocString", blankBehavior = neverwintertoolkit.model.annotation.BlankBehavior.GENERATE)
+    @get:NwnField(name = "Description", type = "CExoLocString")
     @get:JsonProperty("Description")
     @set:JsonProperty("Description")
     var description: CExoLocString? = null
