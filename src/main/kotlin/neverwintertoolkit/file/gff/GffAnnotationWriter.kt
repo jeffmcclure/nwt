@@ -164,7 +164,14 @@ open class GffAnnotationWriter constructor(val gffObj: GffObj) : GffWriterBase()
                         nwnField.name
                     )
 
-                    GffFile.GffFieldType.CExoLocString -> createField(value.getter.call(obj1) as CExoLocString?, nwnField.name)
+                    GffFile.GffFieldType.CExoLocString -> createField(
+                        value.getter.call(obj1) as CExoLocString? ?: when (nwnField.blankBehavior) {
+                            BlankBehavior.GENERATE -> CExoLocString()
+                            BlankBehavior.DEFAULT_VALUE -> CExoLocString(nwnField.defaultValue)
+                            else -> null
+                        },
+                        nwnField.name
+                    )
 
                     GffFile.GffFieldType.VOID -> createFieldVoid(value.getter.call(obj1) as ByteArray?, nwnField.name)
 
