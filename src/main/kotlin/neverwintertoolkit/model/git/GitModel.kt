@@ -2,6 +2,7 @@ package neverwintertoolkit.model.git
 
 // Generated 2024-01-29T13:59:36.830099
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import neverwintertoolkit.file.gff.CExoLocString
 import neverwintertoolkit.file.gff.GenericGffFactory
 import neverwintertoolkit.file.gff.GenericGffWriter
@@ -2842,6 +2843,7 @@ class GitSpecAbility {
     var comment: String? = null
 }
 
+@JsonPropertyOrder(value=["LocName", "ResRef", "Tag"])
 class GitStore {
 
     @get:NwnField(name = "ItemList", type = "List", indexedStructId = true)
