@@ -1,5 +1,7 @@
 package neverwintertoolkit
 
+import neverwintertoolkit.command.GlobalOptions
+import neverwintertoolkit.command.gff.GffOptions
 import neverwintertoolkit.con.BaseTest
 import neverwintertoolkit.file.erf.ErfFile
 import java.nio.file.Files
@@ -12,7 +14,7 @@ class ErfFileTest : BaseTest() {
     fun test1() {
         val path = f("/mod/module000a.mod")
         assert(Files.exists(path)) { "$path file does not exist" }
-        assertFalse(ErfFile(path).readAllEntries().isEmpty(), "empty list")
+        assertFalse(ErfFile(path, GlobalOptions()).readAllEntries().isEmpty(), "empty list")
     }
 
     @Test
@@ -20,7 +22,7 @@ class ErfFileTest : BaseTest() {
         val path = f("/mod/module000a.mod")
         assert(Files.exists(path)) { "$path file does not exist" }
 
-        ErfFile(path).extractAll(getDir(), noErf = false, toStdout = false, status = System.out, useJson = true)
+        ErfFile(path, GlobalOptions()).extractAll(getDir(), noErf = false, toStdout = false, status = System.out, useJson = true)
     }
 
 }

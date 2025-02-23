@@ -2,6 +2,7 @@ package neverwintertoolkit.git
 
 import kotlin.test.Test
 import neverwintertoolkit.JsonSettings
+import neverwintertoolkit.command.GlobalOptions
 import neverwintertoolkit.con.BaseTest
 import neverwintertoolkit.file.gff.GffFactory
 import neverwintertoolkit.file.gff.GffFile
@@ -109,7 +110,7 @@ class GitTest : BaseTest() {
         val gff0 = getFile("0" + factory.extension)
         Files.copy(file, gff0, StandardCopyOption.REPLACE_EXISTING)
 
-        val dat = factory.readGff(file)
+        val dat = factory.readGff(file, GlobalOptions())
         val json = dat.toJson()
         val json1 = getFile("1.json")
         json1.writeText(json)

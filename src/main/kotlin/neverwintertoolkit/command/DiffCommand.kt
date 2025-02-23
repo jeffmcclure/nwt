@@ -2,6 +2,7 @@ package neverwintertoolkit.command
 
 import neverwintertoolkit.file.erf.ErfFile
 import neverwintertoolkit.getNwt
+import neverwintertoolkit.globalSettings
 import picocli.CommandLine
 import java.io.File
 import java.io.FileInputStream
@@ -57,8 +58,8 @@ class DiffCommand : BaseCommand() {
             return
         }
 
-        val entries1 = ErfFile(path1).readAllEntries()
-        val entries2 = ErfFile(path2).readAllEntries()
+        val entries1 = ErfFile(path1, globalOptions = this).readAllEntries()
+        val entries2 = ErfFile(path2, globalOptions = this).readAllEntries()
 
         val names1 = entries1.map { it.fileNameWithExtension }
         val names2 = entries2.map { it.fileNameWithExtension }

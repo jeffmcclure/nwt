@@ -1341,6 +1341,11 @@ class GitEncounter {
     @get:JsonProperty("Comment")
     @set:JsonProperty("Comment")
     var comment: String? = null
+
+    @get:NwnField(name = "VarTable", type = "List", structType = 0)
+    @get:JsonProperty("VarTable")
+    @set:JsonProperty("VarTable")
+    var varTable: List<GitVarTable>? = null
 }
 
 interface HasStructId {
@@ -1548,20 +1553,10 @@ class GitEquipItem : HasStructId {
     @set:JsonProperty("ModelPart1")
     var modelPart1: UByte? = null
 
-    @get:NwnField(name = "xModelPart1", type = "WORD")
-    @get:JsonProperty("XModelPart1")
-    @set:JsonProperty("XModelPart1")
-    var xModelPart1: UShort? = null
-
     @get:NwnField(name = "ModelPart2", type = "BYTE")
     @get:JsonProperty("ModelPart2")
     @set:JsonProperty("ModelPart2")
     var modelPart2: UByte? = null
-
-    @get:NwnField(name = "xModelPart2", type = "WORD")
-    @get:JsonProperty("XModelPart2")
-    @set:JsonProperty("XModelPart2")
-    var xModelPart2: UShort? = null
 
     @get:NwnField(name = "ArmorPart_Pelvis", type = "BYTE")
     @get:JsonProperty("ArmorPartPelvis")
@@ -1572,11 +1567,6 @@ class GitEquipItem : HasStructId {
     @get:JsonProperty("ModelPart3")
     @set:JsonProperty("ModelPart3")
     var modelPart3: UByte? = null
-
-    @get:NwnField(name = "xModelPart3", type = "WORD")
-    @get:JsonProperty("XModelPart3")
-    @set:JsonProperty("XModelPart3")
-    var xModelPart3: UShort? = null
 
     @get:NwnField(name = "Cloth2Color", type = "BYTE")
     @get:JsonProperty("Cloth2Color")
@@ -1956,31 +1946,6 @@ class GitItem {
     @get:JsonProperty("VarTable")
     @set:JsonProperty("VarTable")
     var varTable: List<GitVarTable>? = null
-
-    @get:NwnField(name = "xModelPart1", type = "WORD")
-    @get:JsonProperty("XModelPart1")
-    @set:JsonProperty("XModelPart1")
-    var xModelPart1: UShort? = null
-
-//    @get:NwnField(name = "xModelPart2", type = "WORD")
-//    @get:JsonProperty("XModelPart2")
-//    @set:JsonProperty("XModelPart2")
-//    var xModelPart2: UShort? = null
-//
-//    @get:NwnField(name = "xModelPart3", type = "WORD")
-//    @get:JsonProperty("XModelPart3")
-//    @set:JsonProperty("XModelPart3")
-//    var xModelPart3: UShort? = null
-//
-//    @get:NwnField(name = "xArmorPart_LHand", type = "WORD")
-//    @get:JsonProperty("XArmorPartLHand")
-//    @set:JsonProperty("XArmorPartLHand")
-//    var xArmorPartLHand: UShort? = null
-//
-//    @get:NwnField(name = "xArmorPart_Robe", type = "WORD")
-//    @get:JsonProperty("XArmorPartRobe")
-//    @set:JsonProperty("XArmorPartRobe")
-//    var xArmorPartRobe: UShort? = null
 }
 
 class GitKnown {
@@ -2782,6 +2747,11 @@ class GitSound {
     @get:JsonProperty("ZPosition")
     @set:JsonProperty("ZPosition")
     var zPosition: Float? = null
+
+    @get:NwnField(name = "VarTable", type = "List", structType = 0)
+    @get:JsonProperty("VarTable")
+    @set:JsonProperty("VarTable")
+    var varTable: List<GitVarTable>? = null
 }
 
 class GitSounds {

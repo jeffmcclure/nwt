@@ -2,6 +2,7 @@ package neverwintertoolkit.file.gff
 
 import com.github.difflib.DiffUtils
 import neverwintertoolkit.JsonSettings
+import neverwintertoolkit.command.gff.GffOptions
 import neverwintertoolkit.extractExtension1
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
@@ -23,6 +24,7 @@ class TestGffFile<T : GffObj>(
 ) {
     val extension = extractExtension1(gffFile.name).second
     val list = mutableListOf<Path>()
+    val gffOptions =  GffOptions()
 
     fun getFile(base: String): Path {
         val newFile = if (debugTestMode)
@@ -86,23 +88,23 @@ class TestGffFile<T : GffObj>(
         Files.copy(gffFile, gff0, StandardCopyOption.REPLACE_EXISTING)
 
         try {
-            val xxx = GffFile(gff0).readObject()
+            val xxx = GffFile(gff0, gffOptions).readObject()
             json1.writeText(xxx.toJson())
-            dmp0.writeText(GffFile(gff0).toRawJson())
+            dmp0.writeText(GffFile(gff0, gffOptions).toRawJson())
 
-            json1NoStructId.writeText(GffFile(gff0).readObject().also { it.removeStructIds() }.toJson())
+            json1NoStructId.writeText(GffFile(gff0, gffOptions).readObject().also { it.removeStructIds() }.toJson())
 
-            val con0 = GffFile(gff0).readObject()
+            val con0 = GffFile(gff0, gffOptions).readObject()
             con0.writeGff(gff1)
 
             if (logger.isTraceEnabled) {
                 val x1 = ByteArrayOutputStream()
                 val x2 = PrintStream(x1)
-                GffFile(gff1).dump(x2) // TODO remove
+                GffFile(gff1, gffOptions).dump(x2) // TODO remove
                 logger.trace("x={}", x1.toString(Charsets.UTF_8))
             }
 
-            val gff = GffFile(gff1)
+            val gff = GffFile(gff1, gffOptions)
             dmp1.writeText(gff.toRawJson())
 
             val con = gff.readObject()
@@ -114,38 +116,37 @@ class TestGffFile<T : GffObj>(
              */
             val con1 = gffFactory.parseJson(json1)
             con1.writeGff(gff3) // renumberStructs = false so gff file binary compare is same
-            json3.writeText(GffFile(gff3).readObject().toJson())
-            dmp3.writeText(GffFile(gff3).toRawJson())
+            json3.writeText(GffFile(gff3, gffOptions).readObject().toJson())
+            dmp3.writeText(GffFile(gff3, gffOptions).toRawJson())
 
-            val obj3 = GffFile(gff3).readObject().also { it.removeStructIds() }
+            val obj3 = GffFile(gff3, gffOptions).readObject().also { it.removeStructIds() }
             val txt = obj3.toJson(JsonSettings())
             json3NoStructId.writeText(txt)
 
             /*
              * 4th iteration
              */
-            json4.writeText(GffFile(gff3).readObject().toJson(JsonSettings(pretty = true)))
+            json4.writeText(GffFile(gff3, gffOptions).readObject().toJson(JsonSettings(pretty = true)))
             val con4 = gffFactory.parseJson(json4)
             con4.writeGff(gff4)
-            dmp4.writeText(GffFile(gff4).toRawJson())
+            dmp4.writeText(GffFile(gff4, gffOptions).toRawJson())
 
             /*
              * 5th iteration
              */
             json5.writeText(
-                GffFile(gff4).readObject()
-                    .toJson(JsonSettings(pretty = true))
+                GffFile(gff4, gffOptions).readObject().toJson(JsonSettings(pretty = true))
             )
             val con5 = gffFactory.parseJson(json5)
             con5.writeGff(gff5)
-            dmp5.writeText(GffFile(gff5).toRawJson())
+            dmp5.writeText(GffFile(gff5, gffOptions).toRawJson())
 
             eval(json1NoStructId, json2NoStructId, gffFile.name) ?: return
             eval(json1NoStructId, json3NoStructId, gffFile.name) ?: return
 
-            val base = GffFile(gff0).gffHeader
+            val base = GffFile(gff0, gffOptions).gffHeader
             listOf(gff1, gff3, gff4, gff5).forEach {
-                val head = GffFile(it).gffHeader
+                val head = GffFile(it, gffOptions).gffHeader
                 if (base.structCount != head.structCount
 //                    || base.fieldCount != head.fieldCount
 //                    || base.labelCount != head.labelCount
@@ -216,7 +217,7 @@ class TestGffFile<T : GffObj>(
     data class Merge(val structId: UInt, val leftCount: Int, val rightCount: Int)
 
     private fun getStructSummary(file: Path): Set<Count> {
-        val retval = GffFile(file).structs.map { it.type }.groupBy { it }
+        val retval = GffFile(file, gffOptions).structs.map { it.type }.groupBy { it }
             .entries.map { (key, valu) -> Count(key, valu.size) }.toSet()
         return retval
     }

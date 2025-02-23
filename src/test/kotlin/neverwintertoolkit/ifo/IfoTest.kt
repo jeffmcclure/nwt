@@ -1,5 +1,6 @@
 package neverwintertoolkit.ifo
 
+import neverwintertoolkit.command.GlobalOptions
 import kotlin.test.Test
 import neverwintertoolkit.con.BaseTest
 import neverwintertoolkit.file.gff.GffFactory
@@ -31,9 +32,9 @@ class IfoTest : BaseTest() {
     @Test
     fun module() {
         val file = Paths.get("src/test/resources/ifo/module-lot.ifo")
-        val obj: GffObj = GffFactory.getFactoryForFileName(file)!!.readGff(file)
+        val obj: GffObj = GffFactory.getFactoryForFileName(file)!!.readGff(file, GlobalOptions())
         val ifoFactory = GffFactory.getFactoryForFileName(file)!!
-        val obj2: Ifo = ifoFactory.readGff(file) as Ifo
+        val obj2: Ifo = ifoFactory.readGff(file, GlobalOptions()) as Ifo
         logger.debug("{}", obj.toJson())
         logger.debug("{}", obj2.toJson())
     }

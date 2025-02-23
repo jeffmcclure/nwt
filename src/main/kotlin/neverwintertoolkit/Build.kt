@@ -201,7 +201,7 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
                         it.baseName.lowercase().endsWith(".dlgs.json") ||
                         it.baseName.lowercase().endsWith(".dlgs")
             }.map { aaa: Rec ->
-                buildCommand.logDebug { "two" }
+//                buildCommand.logDebug { "two" }
                 buildCommand.logSuspend {
                     baseFormat.format(index.incrementAndGet(), size, "Compiling and adding", aaa.aPath)
                 }

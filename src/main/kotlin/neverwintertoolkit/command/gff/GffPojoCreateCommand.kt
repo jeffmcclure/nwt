@@ -56,22 +56,22 @@ class GffPojoCreateCommand : GffOptions(), Callable<Int> {
             }
         }
 
-        status.println("Field Count=${clasMap.size}")
+        globalOptions.status.println("Field Count=${clasMap.size}")
         val out = if (fOption) {
-            status.println("writing to NewClass.kt")
+            globalOptions.status.println("writing to NewClass.kt")
             PrintWriter(FileWriter("NewClass.kt"))
-        } else spec.commandLine().out
+        } else globalOptions.spec.commandLine().out
         genClasses(out, clasMap)
         out.close()
 
-        status.flush()
+        globalOptions.status.flush()
         return 0
     }
 
     @OptIn(ExperimentalPathApi::class)
     private fun processErfFile(erfFile: Path, clasMap: DatumSet) {
-        status.println("\nprocessing module $erfFile, Field Count=${clasMap.size}")
-        val erf = ErfFile(erfFile)
+        globalOptions.status.println("\nprocessing module $erfFile, Field Count=${clasMap.size}")
+        val erf = ErfFile(erfFile, globalOptions)
         val dir = Files.createTempDirectory("")!!
         try {
             erf.readAllEntries().forEach { entry ->
@@ -113,12 +113,12 @@ class GffPojoCreateCommand : GffOptions(), Callable<Int> {
     private fun processOneFile(afile: File, clasMap: DatumSet, erfFile: Path? = null) {
         if (fileType != null) {
             if (fileType != GffFactory.getFileType(afile.name)) {
-                status.println("skipping $afile")
+                globalOptions.status.println("skipping $afile")
                 return
             }
         }
-        val gff = GffFile(afile.toPath(), status = status)
-        status.println("processing $afile, Field Count=${clasMap.size}")
+        val gff = GffFile(afile.toPath(), status = globalOptions.status, gffOptions = GffOptions(globalOptions))
+        globalOptions.status.println("processing $afile, Field Count=${clasMap.size}")
 
         val structList = gff.structs
 

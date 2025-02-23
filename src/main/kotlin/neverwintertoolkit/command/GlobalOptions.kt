@@ -6,7 +6,7 @@ import java.io.OutputStream
 import java.io.PrintStream
 
 open class GlobalOptions(prints: PrintStream? = null) {
-    private val logger = org.slf4j.LoggerFactory.getLogger(this::class.java)!!
+    protected val logger = org.slf4j.LoggerFactory.getLogger(this::class.java)!!
 
     @CommandLine.Spec
     lateinit var spec: CommandLine.Model.CommandSpec // injected by picocli

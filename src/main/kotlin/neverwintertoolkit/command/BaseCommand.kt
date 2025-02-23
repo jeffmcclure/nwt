@@ -6,8 +6,6 @@ import kotlin.system.exitProcess
 
 abstract class BaseCommand : Callable<Int>, GlobalOptions() {
 
-    protected val logger = org.slf4j.LoggerFactory.getLogger(this::class.java)
-
     abstract fun called(): Int
     override fun call(): Int {
         try {

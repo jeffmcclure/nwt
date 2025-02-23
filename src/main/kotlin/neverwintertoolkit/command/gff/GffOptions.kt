@@ -9,9 +9,7 @@ import java.io.PrintStream
 import java.nio.file.Path
 import kotlin.io.path.name
 
-open class GffOptions : GlobalOptions() {
-
-    val logger = org.slf4j.LoggerFactory.getLogger(this::class.java)
+open class GffOptions constructor(val globalOptions: GlobalOptions = GlobalOptions()) {
 
     open var mOption = false
     open var nOption = false
@@ -40,8 +38,8 @@ open class GffOptions : GlobalOptions() {
 
             val out2 = outPath?.let { PrintStream(FileOutputStream(it.toFile())) } ?: System.out!!
             try {
-                val gff = GffFile(path, this, status = status)
-                if (outPath != null) status.println("Writing $outPath")
+                val gff = GffFile(path, gffOptions = this, status = globalOptions.status)
+                if (outPath != null) globalOptions.status.println("Writing $outPath")
                 block(gff, out2)
                 if (lOption) out2.println()
             } finally {

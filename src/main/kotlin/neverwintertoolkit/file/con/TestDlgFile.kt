@@ -1,6 +1,7 @@
 package neverwintertoolkit.file.con
 
 import neverwintertoolkit.JsonSettings
+import neverwintertoolkit.command.GlobalOptions
 import neverwintertoolkit.command.gff.GffOptions
 import neverwintertoolkit.file.gff.GffFile
 import neverwintertoolkit.model.dlg.Dlg
@@ -19,6 +20,7 @@ class TestDlgFile constructor(
     val debugTestMode: Boolean = false
 ) {
     val list = mutableListOf<Path>()
+    val gffOptions =  GffOptions().apply { globalOptions.vOption = dumpVerbose; mOption = true }
 
     fun getFile(base: String): Path {
         val newFile = if (debugTestMode)
@@ -60,17 +62,17 @@ class TestDlgFile constructor(
         Files.copy(dlg, dlg0, StandardCopyOption.REPLACE_EXISTING)
 
         try {
-            val xxx = GffFile(dlg).readObject() as Dlg //Con.readGff(dlg0)
+            val xxx = GffFile(dlg, gffOptions).readObject() as Dlg //Con.readGff(dlg0)
             json1.writeText(xxx.apply { /*renumberStructs()*/ }.toJson())
-            GffFile(dlg0, GffOptions().apply { vOption = dumpVerbose; mOption = true }).dump(dmp0)
+            GffFile(dlg0, gffOptions).dump(dmp0)
 
-            val con0 = GffFile(dlg).readObject() as Dlg
-            val reference = if (useReference) GffFile(dlg0) else null
+            val con0 = GffFile(dlg, gffOptions).readObject() as Dlg
+            val reference = if (useReference) GffFile(dlg0, gffOptions) else null
 //            con0.writeDlg(dlg1, reference)
             con0.writeGff(dlg1)
 
 
-            val gff = GffFile(dlg1, GffOptions().apply { vOption = dumpVerbose; mOption = true })
+            val gff = GffFile(dlg1, gffOptions)
             gff.dump(dmp1)
 
             val con = gff.readObject() as Dlg
@@ -82,28 +84,28 @@ class TestDlgFile constructor(
             val con1 = Dlg.factory.parseJson(json1)
 //            con1.writeDlg(dlg3, reference, renumberStructs = false) // renumberStructs = false so .dlg file binary compare is same
             con1.writeGff(dlg3)
-            json3.writeText((GffFile(dlg3).readObject() as Dlg).apply { /*renumberStructs() */}.toJson())
-            GffFile(dlg3, GffOptions().apply { vOption = dumpVerbose; mOption = true }).dump(dmp3)
+            json3.writeText((GffFile(dlg3, gffOptions).readObject() as Dlg).apply { /*renumberStructs() */}.toJson())
+            GffFile(dlg3, gffOptions).dump(dmp3)
 
             /*
              * 4th iteration
              */
-            json4.writeText((GffFile(dlg3).readObject() as Dlg).apply { /*removeIndexField(); removeUnreferencedStructIds()*/ }
+            json4.writeText((GffFile(dlg3, gffOptions).readObject() as Dlg).apply { /*removeIndexField(); removeUnreferencedStructIds()*/ }
                 .toJson(JsonSettings(pretty = true)))
             val con4 = Dlg.factory.parseJson(json4)
 //            con4.writeDlg(dlg4, reference)
             con4.writeGff(dlg4)
-            GffFile(dlg4, GffOptions().apply { vOption = dumpVerbose; mOption = true }).dump(dmp4)
+            GffFile(dlg4, gffOptions).dump(dmp4)
 
             /*
              * 5th iteration
              */
-            json5.writeText((GffFile(dlg4).readObject() as Dlg).apply { /*removeIndexField(); removeUnreferencedStructIds()*/ }
+            json5.writeText((GffFile(dlg4, gffOptions).readObject() as Dlg).apply { /*removeIndexField(); removeUnreferencedStructIds()*/ }
                 .toJson(JsonSettings(pretty = true)))
             val con5 = Dlg.factory.parseJson(json5)
 //            con5.writeDlg(dlg5, reference)
             con5.writeGff(dlg5)
-            GffFile(dlg5, GffOptions().apply { vOption = dumpVerbose; mOption = true }).dump(dmp5)
+            GffFile(dlg5, gffOptions).dump(dmp5)
 
             /**
              * @return null on failure

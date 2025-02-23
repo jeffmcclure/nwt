@@ -1,6 +1,8 @@
 package neverwintertoolkit.file.gff
 
 import neverwintertoolkit.BaseMapper
+import neverwintertoolkit.command.GlobalOptions
+import neverwintertoolkit.command.gff.GffOptions
 import neverwintertoolkit.model.dlg.Dlg
 import neverwintertoolkit.model.are.Are
 import neverwintertoolkit.model.fac.Fac
@@ -43,8 +45,8 @@ interface GffFactory<T : GffObj> : BaseMapper {
     fun parseJson(resource: URL): T
 
     fun readGff(gffFile: GffFile): T
-    fun readGff(file: Path): T {
-        return readGff(GffFile(file))
+    fun readGff(file: Path, globalOptions: GlobalOptions): T {
+        return readGff(GffFile(file, GffOptions(globalOptions)))
     }
 
     fun parseXml(resource: URL): T {

@@ -34,11 +34,11 @@ class ErfWriterTest : BaseTest() {
 
         bos.reset()
 
-        ErfFile(tmp, outStatus = out).erfHeader.print()
+        ErfFile(tmp, outStatus = out, globalOptions = GlobalOptions()).erfHeader.print()
         logger.debug("erfHeader=\n{}", bos)
 
         bos.reset()
-        ErfFile(tmp, outStatus = out).listAllEntries(pattern = null, printArchiveName = true)
+        ErfFile(tmp, outStatus = out, globalOptions = GlobalOptions()).listAllEntries(pattern = null, printArchiveName = true)
         logger.debug("listAllEntries=\n{}", bos)
 
     }

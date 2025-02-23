@@ -40,8 +40,8 @@ class GffGenerateGffCommand : GffOptions(), Callable<Int> {
                     Path.of(path.name + fileExtension)
             } else null
 
-            status.println("Reading $path")
-            if (outPath != null) status.println("Writing $outPath")
+            globalOptions.status.println("Reading $path")
+            if (outPath != null) globalOptions.status.println("Writing $outPath")
 
             val out = outPath?.let { PrintStream(FileOutputStream(it.toFile())) } ?: System.out!!
             try {

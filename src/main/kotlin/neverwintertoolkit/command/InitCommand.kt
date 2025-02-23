@@ -108,7 +108,7 @@ class InitCommand : BaseCommand() {
         logger.debug("threadCount={}", threadCount)
         useJson = !raw
         if (!nOption)
-            Unpack(nwtFile, unpackCommand = this, status = status, useJson = useJson, threadCount = threadCount).unpackJar(unpackNcsFiles = cOption)
+            Unpack(nwtFile, globalOptions = this, status = status, useJson = useJson, threadCount = threadCount).unpackJar(unpackNcsFiles = cOption)
 
         return 0
     }

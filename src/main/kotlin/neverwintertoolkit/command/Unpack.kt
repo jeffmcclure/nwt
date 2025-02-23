@@ -20,7 +20,7 @@ import kotlin.io.path.name
 class Unpack(
     val nwtJson: Path,
     val dir: Path = nwtJson.parent,
-    val unpackCommand: GlobalOptions = GlobalOptions(),
+    val globalOptions: GlobalOptions = GlobalOptions(),
     val status: PrintStream,
     val useJson: Boolean,
     val threadCount: Int = Runtime.getRuntime().availableProcessors()
@@ -42,11 +42,11 @@ class Unpack(
             val file = source ?: nwt.sourcePath
             val fname = file.name
             if (Files.notExists(file)) throw RuntimeException("does not exist $file")
-            val erf = ErfFile(file, outStatus = status)
+            val erf = ErfFile(file, outStatus = status, globalOptions = globalOptions)
             if (erfJson)
-                erf.extractErfJson(dir, unpackCommand.status)
+                erf.extractErfJson(dir, globalOptions.status)
 
-            unpackCommand.logDebug { "threadCount=${threadCount}" }
+            globalOptions.logDebug { "threadCount=${threadCount}" }
 
             val context2 = newFixedThreadPoolContext(threadCount, "unpack")
 
@@ -71,7 +71,7 @@ class Unpack(
                             val tar = dir.resolve(loc).resolve(entry.fileNameWithExtension)
                             val relative = Paths.get(loc).resolve(entry.fileNameWithExtension)
                             var entryName: String? = null
-                            if (unpackCommand.infoEnabled) {
+                            if (globalOptions.infoEnabled) {
                                 val willJson = useJson && GffFactory.getFactoryForFileName(entry.fileNameWithExtension) != null
                                 entryName = if (willJson) {
                                     "$relative${globalSettings.getJsonExtension()}"
@@ -88,10 +88,10 @@ class Unpack(
                             erf.extractEntry(entry, tar, useJson, overwrite = false, toStdout = false)
                         }
                     } else {
-                        unpackCommand.logInfo { "%20s %10s %s".format(fname, "skipping", entry.fileNameWithExtension) }
+                        globalOptions.logInfo { "%20s %10s %s".format(fname, "skipping", entry.fileNameWithExtension) }
                     }
                 }
             }
-        rebuildHakPath(nwtJson, dir)
+        rebuildHakPath(nwtJson, dir, globalOptions)
     }
 }

@@ -1,5 +1,6 @@
 package neverwintertoolkit
 
+import neverwintertoolkit.command.gff.GffOptions
 import kotlin.test.Test
 import neverwintertoolkit.con.BaseTest
 import neverwintertoolkit.file.gff.GffFile

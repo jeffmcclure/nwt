@@ -246,11 +246,6 @@ class Uti : GffObj {
     @get:JsonProperty("VarTable")
     @set:JsonProperty("VarTable")
     var varTable: List<UtiVarTable>? = null
-
-//    @get:NwnField(name = "xModelPart1", type = "WORD")
-//    @get:JsonProperty("XModelPart1")
-//    @set:JsonProperty("XModelPart1")
-//    var xModelPart1: UShort? = null
 }
 
 class UtiProperties {

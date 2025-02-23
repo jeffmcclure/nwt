@@ -48,14 +48,13 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
-import kotlin.system.exitProcess
 
 @Serdeable
 @Introspected
 @ReflectiveAccess
 class GffFile constructor(
     val file: Path,
-    val gffCommand: GffOptions = GffOptions(),
+    val gffOptions: GffOptions = GffOptions(),
     val globalOffset: Long = 0L,
     val status: PrintStream = System.out,
     val entryName: String? = null
@@ -117,9 +116,7 @@ class GffFile constructor(
 
         override fun toString(): String {
             return "IdString(id=$id, string=$string, string.length=${string?.length} string.size=${string?.toByteArray()?.size} ${string?.toByteArray(Charsets.ISO_8859_1)?.size} ${
-                string?.toByteArray(
-                    Charsets.ISO_8859_1
-                )?.size
+                string?.toByteArray(Charsets.ISO_8859_1)?.size
             })"
         }
 
@@ -726,13 +723,13 @@ class GffFile constructor(
         }
     }
 
-    fun dump(out: PrintStream = gffCommand.status) {
+    fun dump(out: PrintStream = gffOptions.globalOptions.status) {
         println(file)
         printHeader(out)
         cacheAllLabels()
         printStructs(structs, out)
 
-        if (gffCommand.debugEnabled) {
+        if (gffOptions.globalOptions.debugEnabled) {
             out.println()
             out.println()
             printAllLabels(out)
@@ -781,7 +778,7 @@ class GffFile constructor(
 
         fun printStruct(index: Int, out: PrintStream = System.out) {
             val struct = list[index]
-            if (gffCommand.mOption) {
+            if (gffOptions.mOption) {
                 out.println(
                     "%3d - GffStruct(type=%s, fieldCount: %d)".format(
                         index,
@@ -799,14 +796,14 @@ class GffFile constructor(
                     )
                 )
             }
-            if (!gffCommand.nOption) {
+            if (!gffOptions.nOption) {
                 struct.fields.forEach {
                     out.println("%8s %s".format("", it))
                 }
             }
         }
 
-        val dumpList = (gffCommand.structList ?: "0-end").replace("end", (list.size - 1).toString())
+        val dumpList = (gffOptions.structList ?: "0-end").replace("end", (list.size - 1).toString())
 
         dumpList.split(",").map { term ->
             term.toProgression(list.size - 1).map { index ->
@@ -875,118 +872,155 @@ class GffFile constructor(
             }
 
         // annotated "name" is key, value is reflection object
-        val map: Map<String, Pair<KMutableProperty<*>, NwnField>> = inst::class.declaredMemberProperties.mapNotNull { member ->
-            if (member is KMutableProperty<*>) {
-                member.getter.findAnnotation<NwnField>()?.let { two ->
-                    Pair(two.name, Pair(member, two))
-                }
-            } else null
-        }.toMap()
+        val map: Map<String, Pair<KMutableProperty<*>, NwnField>> =
+            inst::class.declaredMemberProperties.mapNotNull { member ->
+                if (member is KMutableProperty<*>) {
+                    member.getter.findAnnotation<NwnField>()?.let { two ->
+                        Pair(two.name, Pair(member, two))
+                    }
+                } else null
+            }.toMap()
 
         struct0.fields.forEach { gffField ->
-            map[gffField.label]?.let { (found: KMutableProperty<*>, two: NwnField) ->
-                when (gffField.type) {
-
-                    GffFieldType.ResRef,
-                    GffFieldType.CExoString -> {
-                        val dat = gffField.dataOrDataOffset as String?
-                        if (dat?.isNotEmpty() == true || two.blankBehavior == BlankBehavior.RETAIN) {
-                            try {
-                                found.setter.call(inst, dat ?: "")
-                            } catch (e: Exception) {
-                                val className = if (dat == null) "null" else dat::class.java.name
-                                status.println("error mapping object $file, structId=$structId, ${found.getter.returnType.toString()}, $dat $className")
-                                e.printStackTrace(status)
-                            }
-                        }
-                    }
-
-                    GffFieldType.CHAR -> TODO()
-                    GffFieldType.SHORT -> found.setter.call(inst, gffField.dataOrDataOffset)
-                    GffFieldType.DWORD64 -> TODO()
-                    GffFieldType.INT64 -> TODO()
-                    GffFieldType.FLOAT -> found.setter.call(inst, gffField.dataOrDataOffset)
-                    GffFieldType.DOUBLE -> TODO()
-
-                    // same call in separate blocks for better stack traces
-                    GffFieldType.WORD -> found.setter.call(inst, gffField.dataOrDataOffset)
-                    GffFieldType.DWORD -> found.setter.call(inst, gffField.dataOrDataOffset)
-                    GffFieldType.INT -> found.setter.call(inst, gffField.dataOrDataOffset)
-                    GffFieldType.BYTE -> {
-                        if (found.getter.returnType.classifier == Boolean::class) {
-                            found.setter.call(inst, gffField.dataOrDataOffset == UByteOne)
-                        } else {
-                            found.setter.call(inst, gffField.dataOrDataOffset)
-                        }
-                    }
-
-                    GffFieldType.VOID -> found.setter.call(inst, gffField.dataOrDataOffset)
-                    GffFieldType.CExoLocString -> found.setter.call(inst, gffField.dataOrDataOffset)
-                    GffFieldType.Struct -> {
-                        // TODO this is stupid, but I can't figure how to do it properly with the API
-                        val className = found.getter.returnType.toString().replace("?", "")
-                        val theClass = Class.forName(className).kotlin
-                        val struct = gffField.dataOrDataOffset as GffStruct
-                        val obj = mapToObject(struct.structId, theClass)
-                        found.setter.call(inst, obj)
-                    }
-
-                    GffFieldType.List -> {
-
-                        /*
-                         * field type of List<String> with String for mapped value
-                         */
-                        if (gffField.dataOrDataOffset is List<*>) {
-                            if (gffField.dataOrDataOffset.isEmpty()) {
-                                if (two.blankBehavior == BlankBehavior.RETAIN) {
-                                    found.setter.call(inst, emptyList<Number>())
-                                }
-                            } else if (gffField.dataOrDataOffset.first() is Number) {
-                                @Suppress("UNCHECKED_CAST")
-                                val list = gffField.dataOrDataOffset as List<Number>
-
-
-                                val nwnField: NwnField = found.getter.findAnnotation<NwnField>()!!
-
-                                // TODO this is stupid, but I can't figure how to do it properly with the API
-                                val a99 = found.getter.returnType.toString()
-                                val className = a99.substring(a99.indexOf('<') + 1, a99.indexOf('>'))
-
-                                val alist =
-                                    if (nwnField.elementName.isNotBlank() && nwnField.elementType.isNotBlank() && (className == "String" || className == "kotlin.String")) {
-                                        list.map { number ->
-                                            val first = structs[number.toInt()].fields.first().dataOrDataOffset as String
-                                            first
-                                        }
-                                    } else {
-                                        val theClass = Class.forName(className).kotlin
-
-                                        list.map { number ->
-                                            mapToObject(number.toInt(), theClass).also { x ->
-                                                if (x is HasStructId) {
-                                                    x.structId = structs[number.toInt()].type
-                                                }
-                                            }
-                                        }
-                                    }
-                                found.setter.call(inst, alist)
-                            }
-                        }
+            val found0: Pair<KMutableProperty<*>, NwnField>? = map[gffField.label]
+            var processed = false
+            if (found0 != null) {
+                processField(gffField, found0.second, found0.first, inst, structId)
+                processed = true
+            } else if (gffField.label.startsWith("x")) {
+                val xFieldMap = mapOf(
+                    "xArmorPart_LBice" to "ArmorPart_LBicep",
+                    "xArmorPart_LShou" to "ArmorPart_LShoul",
+                    "xArmorPart_LThig" to "ArmorPart_LThigh",
+                    "xArmorPart_Pelvi" to "ArmorPart_Pelvis",
+                    "xArmorPart_RBice" to "ArmorPart_RBicep",
+                    "xArmorPart_RShou" to "ArmorPart_RShoul",
+                    "xArmorPart_RThig" to "ArmorPart_RThigh"
+                )
+                val newName = xFieldMap[gffField.label] ?: gffField.label.substring(1)
+                if (map.containsKey(newName)) {
+                    val found0: Pair<KMutableProperty<*>, NwnField> = map.getValue(newName)
+                    if (found0.second.type == "BYTE" && gffField.type == GffFieldType.WORD) {
+                        gffOptions.globalOptions.logDebug { "mapping ${gffField.label} to $newName" }
+                        if (gffOptions.globalOptions.debugEnabled) status.flush()
+                        gffOptions.globalOptions.status.flush()
+                        val byteFieldWithoutX = struct0.fields.first { it.label == newName }
+                        processField(byteFieldWithoutX, found0.second, found0.first, inst, structId)
+                        processed = true
                     }
                 }
-            } ?: run {
+            }
+            if (!processed) {
                 val msg = "field not found ${gffField.label} on class ${inst::class.java.name} $gffField for " +
                         if (entryName != null) "'${entryName}' in " else {
                             ""
                         } +
                         "'${file}' ${gffField.genFieldCode2()}"
-                System.err.println(msg)
+                gffOptions.globalOptions.logError { msg }
                 if (globalSettings.strictTestingMode)
                     throw RuntimeException(msg)
             }
         }
 
         return inst
+    }
+
+    private fun <K : Any> processField(
+        gffField: GffField,
+        two: NwnField,
+        found: KMutableProperty<*>,
+        inst: K,
+        structId: Int
+    ) {
+        when (gffField.type) {
+
+            GffFieldType.ResRef,
+            GffFieldType.CExoString -> {
+                val dat = gffField.dataOrDataOffset as String?
+                if (dat?.isNotEmpty() == true || two.blankBehavior == BlankBehavior.RETAIN) {
+                    try {
+                        found.setter.call(inst, dat ?: "")
+                    } catch (e: Exception) {
+                        val className = if (dat == null) "null" else dat::class.java.name
+                        status.println("error mapping object $file, structId=$structId, ${found.getter.returnType.toString()}, $dat $className")
+                        e.printStackTrace(status)
+                    }
+                }
+            }
+
+            GffFieldType.CHAR -> TODO()
+            GffFieldType.SHORT -> found.setter.call(inst, gffField.dataOrDataOffset)
+            GffFieldType.DWORD64 -> TODO()
+            GffFieldType.INT64 -> TODO()
+            GffFieldType.FLOAT -> found.setter.call(inst, gffField.dataOrDataOffset)
+            GffFieldType.DOUBLE -> TODO()
+
+            // same call in separate blocks for better stack traces
+            GffFieldType.WORD -> found.setter.call(inst, gffField.dataOrDataOffset)
+            GffFieldType.DWORD -> found.setter.call(inst, gffField.dataOrDataOffset)
+            GffFieldType.INT -> found.setter.call(inst, gffField.dataOrDataOffset)
+            GffFieldType.BYTE -> {
+                if (found.getter.returnType.classifier == Boolean::class) {
+                    found.setter.call(inst, gffField.dataOrDataOffset == UByteOne)
+                } else {
+                    found.setter.call(inst, gffField.dataOrDataOffset)
+                }
+            }
+
+            GffFieldType.VOID -> found.setter.call(inst, gffField.dataOrDataOffset)
+            GffFieldType.CExoLocString -> found.setter.call(inst, gffField.dataOrDataOffset)
+            GffFieldType.Struct -> {
+                // TODO this is stupid, but I can't figure how to do it properly with the API
+                val className = found.getter.returnType.toString().replace("?", "")
+                val theClass = Class.forName(className).kotlin
+                val struct = gffField.dataOrDataOffset as GffStruct
+                val obj = mapToObject(struct.structId, theClass)
+                found.setter.call(inst, obj)
+            }
+
+            GffFieldType.List -> {
+
+                /*
+                         * field type of List<String> with String for mapped value
+                         */
+                if (gffField.dataOrDataOffset is List<*>) {
+                    if (gffField.dataOrDataOffset.isEmpty()) {
+                        if (two.blankBehavior == BlankBehavior.RETAIN) {
+                            found.setter.call(inst, emptyList<Number>())
+                        }
+                    } else if (gffField.dataOrDataOffset.first() is Number) {
+                        @Suppress("UNCHECKED_CAST")
+                        val list = gffField.dataOrDataOffset as List<Number>
+
+
+                        val nwnField: NwnField = found.getter.findAnnotation<NwnField>()!!
+
+                        // TODO this is stupid, but I can't figure how to do it properly with the API
+                        val a99 = found.getter.returnType.toString()
+                        val className = a99.substring(a99.indexOf('<') + 1, a99.indexOf('>'))
+
+                        val alist =
+                            if (nwnField.elementName.isNotBlank() && nwnField.elementType.isNotBlank() && (className == "String" || className == "kotlin.String")) {
+                                list.map { number ->
+                                    val first = structs[number.toInt()].fields.first().dataOrDataOffset as String
+                                    first
+                                }
+                            } else {
+                                val theClass = Class.forName(className).kotlin
+
+                                list.map { number ->
+                                    mapToObject(number.toInt(), theClass).also { x ->
+                                        if (x is HasStructId) {
+                                            x.structId = structs[number.toInt()].type
+                                        }
+                                    }
+                                }
+                            }
+                        found.setter.call(inst, alist)
+                    }
+                }
+            }
+        }
     }
 
 }

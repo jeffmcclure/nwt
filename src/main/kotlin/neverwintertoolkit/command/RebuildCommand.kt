@@ -25,18 +25,18 @@ class RebuildCommand : BaseCommand() {
 
     override fun called(): Int {
         val nwt = getNwtJsonFile(dir)
-        rebuildHakPath(nwt, dir?.toPath() ?: nwt.parent)
+        rebuildHakPath(nwt, dir?.toPath() ?: nwt.parent, this)
         return 0
     }
 }
 
-fun rebuildHakPath(nwtFile: Path, dir: Path = nwtFile.parent) {
+fun rebuildHakPath(nwtFile: Path, dir: Path = nwtFile.parent, globalOptions: GlobalOptions) {
     val nwtJson: Nwt = Nwt.parseJson(nwtFile).first()
     if (!nwtJson.isModule) return
     // return null to skip
     fun include(str: Path): Path? {
         if (!str.exists()) return null
-        val any = ErfFile(str).readAllEntries().any { it.fileType == FileType.kFileTypeNSS || it.fileType == FileType.kFileTypeNCS }
+        val any = ErfFile(str, globalOptions = globalOptions).readAllEntries().any { it.fileType == FileType.kFileTypeNSS || it.fileType == FileType.kFileTypeNCS }
         return if (any) str else null
     }
 
@@ -50,7 +50,7 @@ fun rebuildHakPath(nwtFile: Path, dir: Path = nwtFile.parent) {
         } else {
             val mod = dir.resolve("src").resolve("module.ifo")
             if (mod.exists()) {
-                Ifo.factory.readGff(mod)
+                Ifo.factory.readGff(mod, globalOptions)
             } else {
                 throw RuntimeException("module.ifo not found")
             }

@@ -18,7 +18,6 @@ import picocli.CommandLine.Command
         GffGenerateXmlCommand::class,
         GffPojoCreateCommand::class,
     ]
-
 )
 @ReflectiveAccess
 class GffCommand

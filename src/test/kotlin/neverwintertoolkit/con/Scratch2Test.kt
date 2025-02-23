@@ -3,6 +3,7 @@ package neverwintertoolkit.con
 import kotlin.test.Test
 import neverwintertoolkit.model.dlg.Dlg
 import neverwintertoolkit.JsonSettings
+import neverwintertoolkit.command.GlobalOptions
 import org.slf4j.event.Level
 import java.nio.file.Files
 import java.nio.file.Path
@@ -15,7 +16,7 @@ class Scratch2Test : BaseTest() {
     private val logger = org.slf4j.LoggerFactory.getLogger(this::class.java)!!
 
     fun two(file: Path) {
-        val con = Dlg.factory.readGff(file)
+        val con = Dlg.factory.readGff(file, GlobalOptions())
 
 //        println(con.toJson(true))
 //        println(con.toXml(true))

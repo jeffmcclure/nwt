@@ -3,7 +3,6 @@ package neverwintertoolkit.file.erf
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.core.annotation.ReflectiveAccess
 import io.micronaut.serde.annotation.Serdeable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
@@ -13,6 +12,7 @@ import neverwintertoolkit.FileType
 import neverwintertoolkit.FileTypeIdMap
 import neverwintertoolkit.command.GlobalOptions
 import neverwintertoolkit.command.formatThousands
+import neverwintertoolkit.command.gff.GffOptions
 import neverwintertoolkit.command.printTable
 import neverwintertoolkit.copyBytesTo
 import neverwintertoolkit.file.gff.GffFactory
@@ -39,7 +39,7 @@ import kotlin.io.path.writer
  *   encapsulated file: an encapsulated resource file (ERF),
  *   BioWare Aurora Engine/Toolset files that use the ERF format include the following: .erf, .hak, .mod, and .nwm.
  */
-class ErfFile(val file: Path, val globalOptions: GlobalOptions = GlobalOptions(), val outStatus: PrintStream = globalOptions.status) {
+class ErfFile constructor(val file: Path, val globalOptions: GlobalOptions, val outStatus: PrintStream = globalOptions.status) {
 
     val begin = mem()
     val start = mem()
@@ -280,7 +280,7 @@ class ErfFile(val file: Path, val globalOptions: GlobalOptions = GlobalOptions()
 
         if (toStdout) {
             if (convertToJson) {
-                val gffFile = GffFile(file, globalOffset = entry.offsetToResource, status = outStatus, entryName = targetPath.name)
+                val gffFile = GffFile(file, globalOffset = entry.offsetToResource, status = outStatus, entryName = targetPath.name, gffOptions = GffOptions(globalOptions))
                 val obj = gffFile.readObject()
                 obj.writeJson(System.out)
             } else {
@@ -312,7 +312,7 @@ class ErfFile(val file: Path, val globalOptions: GlobalOptions = GlobalOptions()
 
             if (convertToJson) {
                 val name = targetPath.name + globalSettings.getJsonExtension()
-                val gffFile = GffFile(file, globalOffset = entry.offsetToResource, status = outStatus, entryName = targetPath.name)
+                val gffFile = GffFile(file, globalOffset = entry.offsetToResource, status = outStatus, entryName = targetPath.name, gffOptions = GffOptions(globalOptions))
                 val tpath = targetPath.parent?.resolve(name) ?: Paths.get(name)
                 if (overwriteCheck(tpath)) {
                     status(name)

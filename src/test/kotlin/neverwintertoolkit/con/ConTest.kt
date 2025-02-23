@@ -11,6 +11,8 @@ import java.nio.file.Paths
 import kotlin.io.path.writeText
 import kotlin.test.Ignore
 import neverwintertoolkit.ReadPart
+import neverwintertoolkit.command.GlobalOptions
+import neverwintertoolkit.command.gff.GffOptions
 
 class ConTest : BaseTest() {
     private val logger = org.slf4j.LoggerFactory.getLogger(this::class.java)!!
@@ -70,7 +72,7 @@ class ConTest : BaseTest() {
     fun dev2() {
 //        val file = f("/con/modules/con_janna.dlg")
         val file = f("/con/reference/con_bbb.dlg")
-        Dlg.factory.readGff(file)
+        Dlg.factory.readGff(file, GlobalOptions())
 //        println(GffConReader(GffFile(file)).readCon().toJson())
     }
 
@@ -97,13 +99,13 @@ class ConTest : BaseTest() {
 //        val file = f("/con/reference/con_i18n.dlg")
 //        val file = f("/con/reference/con_aaa.dlg")
         val file = f("/con/modules/con_janna.dlg")
-        logger.debug("{}", Dlg.factory.readGff(file).toJson())
+        logger.debug("{}", Dlg.factory.readGff(file, GlobalOptions()).toJson())
     }
 
     @Test
     fun oneGen() {
         val file = f("/con/reference/con_aaa.dlg")
-        val dat: Dlg = Dlg.factory.readGff(file)
+        val dat: Dlg = Dlg.factory.readGff(file, GlobalOptions())
         val json1 = getFile("1.json")
         json1.writeText(dat.toJson())
         logger.debug(dat.toJson())

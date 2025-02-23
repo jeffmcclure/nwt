@@ -35,7 +35,7 @@ class UnpackCommand : BaseCommand() {
     override fun called(): Int {
         logger.debug("threadCount={}", threadCount)
         useJson = !raw
-        Unpack(getNwtJsonFile(dir), unpackCommand = this, status = status, useJson = useJson, threadCount = threadCount).unpackJar(file?.toPath(), unpackNcsFiles = cOption)
+        Unpack(getNwtJsonFile(dir), globalOptions = this, status = status, useJson = useJson, threadCount = threadCount).unpackJar(file?.toPath(), unpackNcsFiles = cOption)
         return 0
     }
 }
