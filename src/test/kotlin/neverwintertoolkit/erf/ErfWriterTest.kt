@@ -19,7 +19,7 @@ class ErfWriterTest : BaseTest() {
         val bos = ByteArrayOutputStream()
         val out = PrintStream(bos)
 
-        val erfWriter = ErfWriter(GlobalOptions(out))
+        val erfWriter = ErfWriter(GlobalOptions(prints = out))
 
         // add members
         erfWriter.addFile(Path.of("src/test/resources/area/modules/area002.are"))

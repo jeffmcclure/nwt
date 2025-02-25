@@ -9,6 +9,7 @@ import io.micronaut.serde.annotation.Serdeable
 import neverwintertoolkit.JsonSettings
 import neverwintertoolkit.UByteOne
 import neverwintertoolkit.UpperCamelCaseStrategy
+import neverwintertoolkit.command.GlobalOptions
 import neverwintertoolkit.command.gff.GffOptions
 import neverwintertoolkit.command.gff.genFieldCode2
 import neverwintertoolkit.extractSigned16
@@ -57,7 +58,8 @@ class GffFile constructor(
     val gffOptions: GffOptions = GffOptions(),
     val globalOffset: Long = 0L,
     val status: PrintStream = System.out,
-    val entryName: String? = null
+    val entryName: String? = null,
+    val globalOptions: GlobalOptions = GlobalOptions()
 ) {
     init {
         logger.trace("GffFile({})", file)
@@ -723,13 +725,13 @@ class GffFile constructor(
         }
     }
 
-    fun dump(out: PrintStream = gffOptions.globalOptions.status) {
+    fun dump(out: PrintStream = globalOptions.status) {
         println(file)
         printHeader(out)
         cacheAllLabels()
         printStructs(structs, out)
 
-        if (gffOptions.globalOptions.debugEnabled) {
+        if (globalOptions.debugEnabled) {
             out.println()
             out.println()
             printAllLabels(out)
@@ -901,9 +903,9 @@ class GffFile constructor(
                 if (map.containsKey(newName)) {
                     val found0: Pair<KMutableProperty<*>, NwnField> = map.getValue(newName)
                     if (found0.second.type == "BYTE" && gffField.type == GffFieldType.WORD) {
-                        gffOptions.globalOptions.logDebug { "mapping ${gffField.label} to $newName" }
-                        if (gffOptions.globalOptions.debugEnabled) status.flush()
-                        gffOptions.globalOptions.status.flush()
+                        globalOptions.logDebug { "mapping ${gffField.label} to $newName" }
+                        if (globalOptions.debugEnabled) status.flush()
+                        globalOptions.status.flush()
                         val byteFieldWithoutX = struct0.fields.first { it.label == newName }
                         processField(byteFieldWithoutX, found0.second, found0.first, inst, structId)
                         processed = true
@@ -916,7 +918,7 @@ class GffFile constructor(
                             ""
                         } +
                         "'${file}' ${gffField.genFieldCode2()}"
-                gffOptions.globalOptions.logError { msg }
+                globalOptions.logError { msg }
                 if (globalSettings.strictTestingMode)
                     throw RuntimeException(msg)
             }

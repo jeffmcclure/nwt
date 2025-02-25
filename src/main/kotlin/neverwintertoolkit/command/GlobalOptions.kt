@@ -64,7 +64,6 @@ open class GlobalOptions(prints: PrintStream? = null) {
         }
     }
 
-
     val semaphore = Semaphore(1)
     suspend fun infoSuspend(block: () -> String) {
         if (statusLogLevel > 0) {
@@ -80,9 +79,9 @@ open class GlobalOptions(prints: PrintStream? = null) {
     suspend fun logSuspend(block: () -> String) {
 //        println("statusLogLevel: $statusLogLevel")
         if (statusLogLevel > 1) {
-            debugSuspend ( block )
+            debugSuspend(block)
         } else {
-            infoSuspendNo ( block )
+            infoSuspendNo(block)
         }
     }
 

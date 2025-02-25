@@ -1,7 +1,6 @@
 package neverwintertoolkit.file.con
 
 import neverwintertoolkit.JsonSettings
-import neverwintertoolkit.command.GlobalOptions
 import neverwintertoolkit.command.gff.GffOptions
 import neverwintertoolkit.file.gff.GffFile
 import neverwintertoolkit.model.dlg.Dlg
@@ -20,7 +19,7 @@ class TestDlgFile constructor(
     val debugTestMode: Boolean = false
 ) {
     val list = mutableListOf<Path>()
-    val gffOptions =  GffOptions().apply { globalOptions.vOption = dumpVerbose; mOption = true }
+    val gffOptions =  GffOptions().apply { vOption = dumpVerbose; mOption = true }
 
     fun getFile(base: String): Path {
         val newFile = if (debugTestMode)

@@ -54,7 +54,7 @@ class GffFileTest : BaseTest() {
     @Test
     fun one() {
         val path = f2("/con/reference/con_ddd.dlg")
-        val one = GffFile(path, GffOptions().apply { globalOptions.vOption = true; globalOptions.oOption = true })
+        val one = GffFile(path, GffOptions().apply { vOption = true; oOption = true })
         one.dump()
     }
 

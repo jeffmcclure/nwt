@@ -25,10 +25,10 @@ class Git : GffObj {
     override fun writeGff(output: OutputStream) = throw UnsupportedOperationException()
 
     override fun writeGff(file: Path, globalOptions: GlobalOptions?) {
-        println("Writing $file")
+        globalOptions?.logInfo { "Writing $file" }
         GenericGffWriter(this, ".git").writeGff(file)
         val target = file.parent?.resolve(file.name + ".1.gic") ?: Path.of(file.name + ".1.gic")
-        println("Writing $target")
+        globalOptions?.logInfo { "Writing $target" }
         GenericGffWriter(Gic(), ".gic").writeGff(target)
     }
 

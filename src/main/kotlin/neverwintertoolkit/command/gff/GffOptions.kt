@@ -30,8 +30,8 @@ open class GffTextGenerator : GffOptions() {
 
             val out1 = outPath?.let { PrintStream(FileOutputStream(it.toFile())) } ?: System.out!!
             try {
-                val gff = GffFile(path, gffOptions = this, status = globalOptions.status)
-                if (outPath != null) globalOptions.status.println("Writing $outPath")
+                val gff = GffFile(path, gffOptions = this, status = status)
+                if (outPath != null) status.println("Writing $outPath")
                 block(gff, out1)
                 if (lOption) out1.println()
             } finally {
@@ -41,7 +41,7 @@ open class GffTextGenerator : GffOptions() {
     }
 }
 
-open class GffOptions constructor(val globalOptions: GlobalOptions = GlobalOptions()) {
+open class GffOptions constructor() : GlobalOptions() {
 
     open var mOption = false
     open var nOption = false

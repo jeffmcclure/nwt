@@ -280,7 +280,7 @@ class ErfFile constructor(val file: Path, val globalOptions: GlobalOptions, val 
 
         if (toStdout) {
             if (convertToJson) {
-                val gffFile = GffFile(file, globalOffset = entry.offsetToResource, status = outStatus, entryName = targetPath.name, gffOptions = GffOptions(globalOptions))
+                val gffFile = GffFile(file, globalOffset = entry.offsetToResource, status = outStatus, entryName = targetPath.name, gffOptions = GffOptions())
                 val obj = gffFile.readObject()
                 obj.writeJson(System.out)
             } else {
@@ -312,7 +312,7 @@ class ErfFile constructor(val file: Path, val globalOptions: GlobalOptions, val 
 
             if (convertToJson) {
                 val name = targetPath.name + globalSettings.getJsonExtension()
-                val gffFile = GffFile(file, globalOffset = entry.offsetToResource, status = outStatus, entryName = targetPath.name, gffOptions = GffOptions(globalOptions))
+                val gffFile = GffFile(file, globalOffset = entry.offsetToResource, status = outStatus, entryName = targetPath.name, gffOptions = GffOptions(), globalOptions = globalOptions)
                 val tpath = targetPath.parent?.resolve(name) ?: Paths.get(name)
                 if (overwriteCheck(tpath)) {
                     status(name)

@@ -37,13 +37,13 @@ class GffGenerateGffCommand : GffOptions(), Callable<Int> {
                 Path.of(path.name + fileExtension)
 
             if (GffFactory.isJsonFile(path)) {
-                globalOptions.status.println("Reading $path")
+                this.logInfo { "Reading $path" }
                 val one = gffFactory.parseJson(path)
-                one.writeGff(outPath, globalOptions)
+                one.writeGff(outPath, this)
             } else if (GffFactory.isXml(path)) {
-                globalOptions.status.println("Reading $path")
+                this.logInfo { "Reading $path" }
                 val xx = gffFactory.parseXml(path)
-                xx.writeGff(outPath, globalOptions)
+                xx.writeGff(outPath, this)
             } else throw RuntimeException("unknown file extension for $path")
         }
     }

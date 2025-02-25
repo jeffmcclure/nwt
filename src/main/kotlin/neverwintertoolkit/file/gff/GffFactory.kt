@@ -46,7 +46,7 @@ interface GffFactory<T : GffObj> : BaseMapper {
 
     fun readGff(gffFile: GffFile): T
     fun readGff(file: Path, globalOptions: GlobalOptions): T {
-        return readGff(GffFile(file, GffOptions(globalOptions)))
+        return readGff(GffFile(file))
     }
 
     fun parseXml(resource: URL): T {

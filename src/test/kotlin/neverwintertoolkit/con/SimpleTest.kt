@@ -17,7 +17,7 @@ class SimpleTest : BaseTest() {
     fun simple(file: Path) {
         PrintStream(Path.of("build/out.txt").outputStream()).use { writer ->
             writer.println("$file")
-            GffFile(file, GffOptions().apply { globalOptions.oOption = true; globalOptions.vOption = true }).dump(writer)
+            GffFile(file, GffOptions().apply { oOption = true; vOption = true }).dump(writer)
         }
     }
 
