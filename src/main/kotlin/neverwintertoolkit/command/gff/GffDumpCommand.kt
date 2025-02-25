@@ -11,7 +11,7 @@ import java.util.concurrent.Callable
     description = ["Dump"],
     versionProvider = VersionInfo::class
 )
-class GffDumpCommand : Callable<Int>, GffOptions() {
+class GffDumpCommand : Callable<Int>, GffTextGenerator() {
 
     @CommandLine.Parameters(index = "0", description = ["The GFF file to read."], arity = "1..")
     override lateinit var files: List<File>

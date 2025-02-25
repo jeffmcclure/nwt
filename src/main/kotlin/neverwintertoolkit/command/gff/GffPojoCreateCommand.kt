@@ -25,7 +25,7 @@ import kotlin.io.path.name
     description = ["Create POJO from JSON or XML"],
     versionProvider = VersionInfo::class
 )
-class GffPojoCreateCommand : GffOptions(), Callable<Int> {
+class GffPojoCreateCommand : GffTextGenerator(), Callable<Int> {
 
     companion object {
         //        private val logger = org.slf4j.LoggerFactory.getLogger(GffPojoCreateCommand::class.java.toString())!!

@@ -9,18 +9,10 @@ import java.io.PrintStream
 import java.nio.file.Path
 import kotlin.io.path.name
 
-open class GffOptions constructor(val globalOptions: GlobalOptions = GlobalOptions()) {
-
-    open var mOption = false
-    open var nOption = false
-    open var structList: String? = null
+open class GffTextGenerator : GffOptions() {
 
     @CommandLine.Option(names = ["f", "-f"], required = false, description = ["generate output to files instead of standard out"])
     open var fOption = false
-
-    open var lOption = false
-    open var files: List<File> = emptyList()
-    open var zOption = false
 
     fun foo(
         fileExtension: String,
@@ -36,15 +28,26 @@ open class GffOptions constructor(val globalOptions: GlobalOptions = GlobalOptio
                     Path.of(path.name + fileExtension)
             } else null
 
-            val out2 = outPath?.let { PrintStream(FileOutputStream(it.toFile())) } ?: System.out!!
+            val out1 = outPath?.let { PrintStream(FileOutputStream(it.toFile())) } ?: System.out!!
             try {
                 val gff = GffFile(path, gffOptions = this, status = globalOptions.status)
                 if (outPath != null) globalOptions.status.println("Writing $outPath")
-                block(gff, out2)
-                if (lOption) out2.println()
+                block(gff, out1)
+                if (lOption) out1.println()
             } finally {
-                if (outPath != null) out2.close()
+                if (outPath != null) out1.close()
             }
         }
     }
+}
+
+open class GffOptions constructor(val globalOptions: GlobalOptions = GlobalOptions()) {
+
+    open var mOption = false
+    open var nOption = false
+    open var structList: String? = null
+
+    open var lOption = false
+    open var files: List<File> = emptyList()
+    open var zOption = false
 }

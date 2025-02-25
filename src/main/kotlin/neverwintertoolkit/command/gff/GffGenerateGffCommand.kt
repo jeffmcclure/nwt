@@ -4,8 +4,6 @@ import neverwintertoolkit.command.VersionInfo
 import neverwintertoolkit.file.gff.GffFactory
 import picocli.CommandLine
 import java.io.File
-import java.io.FileOutputStream
-import java.io.PrintStream
 import java.nio.file.Path
 import java.util.concurrent.Callable
 import kotlin.io.path.name
@@ -33,27 +31,20 @@ class GffGenerateGffCommand : GffOptions(), Callable<Int> {
             if (logger.isDebugEnabled)
                 logger.debug("gffFactory={}, fileExtension={}", gffFactory::class.java.name, fileExtension)
 
-            val outPath = if (fOption) {
-                if (path.parent != null)
-                    path.parent.resolve(path.name + fileExtension)
-                else
-                    Path.of(path.name + fileExtension)
-            } else null
+            val outPath = if (path.parent != null)
+                path.parent.resolve(path.name + fileExtension)
+            else
+                Path.of(path.name + fileExtension)
 
-            globalOptions.status.println("Reading $path")
-            if (outPath != null) globalOptions.status.println("Writing $outPath")
-
-            val out = outPath?.let { PrintStream(FileOutputStream(it.toFile())) } ?: System.out!!
-            try {
-                if (GffFactory.isJsonFile(path)) {
-                    val one = gffFactory.parseJson(path)
-                    one.writeGff(out)
-                } else if (GffFactory.isXml(path)) {
-                    gffFactory.parseXml(path).writeGff(out)
-                } else throw RuntimeException("unknown file extension for $path")
-            } finally {
-                if (outPath != null) out.close()
-            }
+            if (GffFactory.isJsonFile(path)) {
+                globalOptions.status.println("Reading $path")
+                val one = gffFactory.parseJson(path)
+                one.writeGff(outPath, globalOptions)
+            } else if (GffFactory.isXml(path)) {
+                globalOptions.status.println("Reading $path")
+                val xx = gffFactory.parseXml(path)
+                xx.writeGff(outPath, globalOptions)
+            } else throw RuntimeException("unknown file extension for $path")
         }
     }
 

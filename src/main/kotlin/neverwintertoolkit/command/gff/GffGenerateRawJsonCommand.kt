@@ -14,7 +14,7 @@ import java.util.concurrent.Callable
     description = ["Generate raw JSON"],
     versionProvider = VersionInfo::class
 )
-class GffGenerateRawJsonCommand : GffOptions(), Callable<Int> {
+class GffGenerateRawJsonCommand : GffTextGenerator(), Callable<Int> {
 
     @CommandLine.Parameters(index = "0", description = ["The GFF file to read."], arity = "1..")
     override lateinit var files: List<File>

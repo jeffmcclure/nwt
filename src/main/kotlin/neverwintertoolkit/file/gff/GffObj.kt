@@ -8,6 +8,7 @@ import io.micronaut.core.annotation.ReflectiveAccess
 import io.micronaut.serde.annotation.Serdeable
 import neverwintertoolkit.BaseMapper
 import neverwintertoolkit.JsonSettings
+import neverwintertoolkit.command.GlobalOptions
 import java.io.OutputStream
 import java.nio.file.Path
 import kotlin.io.path.outputStream
@@ -19,10 +20,6 @@ interface GffObj : BaseMapper {
     fun toJson(jsonSettings: JsonSettings = JsonSettings()): String {
         return getMapper(jsonSettings).writeValueAsString(this)
     }
-
-//    fun toJson(): String {
-//        return toJson(JsonSettings())
-//    }
 
     fun toXml(jsonSettings: JsonSettings): String {
         val mapper = XmlMapper()
@@ -47,7 +44,8 @@ interface GffObj : BaseMapper {
     }
 
     fun writeGff(output: OutputStream)
-    fun writeGff(file: Path) {
+    fun writeGff(file: Path, globalOptions: GlobalOptions? = null) {
+        println("Writing $file")
         file.outputStream().use { out ->
             writeGff(out)
         }

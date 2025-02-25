@@ -3,20 +3,34 @@ package neverwintertoolkit.model.git
 // Generated 2024-01-29T13:59:36.830099
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import neverwintertoolkit.command.GlobalOptions
 import neverwintertoolkit.file.gff.CExoLocString
 import neverwintertoolkit.file.gff.GenericGffFactory
 import neverwintertoolkit.file.gff.GenericGffWriter
 import neverwintertoolkit.file.gff.GffFactory
 import neverwintertoolkit.file.gff.GffObj
 import neverwintertoolkit.model.annotation.NwnField
+import neverwintertoolkit.model.gic.Gic
 import java.io.OutputStream
+import java.nio.file.Path
+import java.nio.file.Paths
+import kotlin.io.path.name
 
 class Git : GffObj {
     companion object {
         val factory: GffFactory<Git> = GenericGffFactory(Git::class.java, ".git")
     }
 
-    override fun writeGff(output: OutputStream) = GenericGffWriter(this, ".git").writeGff(output)
+    //override fun writeGff(output: OutputStream) = GenericGffWriter(this, ".git").writeGff(output)
+    override fun writeGff(output: OutputStream) = throw UnsupportedOperationException()
+
+    override fun writeGff(file: Path, globalOptions: GlobalOptions?) {
+        println("Writing $file")
+        GenericGffWriter(this, ".git").writeGff(file)
+        val target = file.parent?.resolve(file.name + ".1.gic") ?: Path.of(file.name + ".1.gic")
+        println("Writing $target")
+        GenericGffWriter(Gic(), ".gic").writeGff(target)
+    }
 
     @get:NwnField(name = "Door List", type = "List", structType = 8)
     @get:JsonProperty("DoorList")

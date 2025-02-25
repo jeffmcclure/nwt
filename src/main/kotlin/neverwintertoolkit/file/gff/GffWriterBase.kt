@@ -4,6 +4,8 @@ import neverwintertoolkit.toBytes
 import neverwintertoolkit.toBytesWORD
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
+import kotlin.io.path.outputStream
+import java.nio.file.Path
 
 abstract class GffWriterBase() {
     protected val fieldIndices = mutableListOf<Int>()
@@ -12,6 +14,12 @@ abstract class GffWriterBase() {
     protected val labels = mutableMapOf<String, Int>()
     protected val structs = mutableListOf<GffFile.GffStruct>()
     protected val fieldData = ByteArrayOutputStream()
+
+    open fun writeGff(file: Path) {
+        file.outputStream().use { out ->
+            writeGff(out)
+        }
+    }
 
     open fun writeGff(out: OutputStream) {
         logger.trace("writeDlg() enter")

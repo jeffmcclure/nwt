@@ -13,7 +13,7 @@ import java.util.concurrent.Callable
     description = ["Generate XML"],
     versionProvider = VersionInfo::class
 )
-class GffGenerateXmlCommand : GffOptions(), Callable<Int> {
+class GffGenerateXmlCommand : GffTextGenerator(), Callable<Int> {
 
     @CommandLine.Parameters(index = "0", description = ["The GFF file to read."], arity = "1..")
     override lateinit var files: List<File>

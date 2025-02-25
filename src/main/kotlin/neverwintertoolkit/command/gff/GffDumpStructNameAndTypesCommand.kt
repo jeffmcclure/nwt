@@ -11,7 +11,7 @@ import java.util.concurrent.Callable
     description = ["Show Struct Names and Types"],
     versionProvider = VersionInfo::class
 )
-class GffDumpStructNameAndTypesCommand : GffOptions(), Callable<Int> {
+class GffDumpStructNameAndTypesCommand : GffTextGenerator(), Callable<Int> {
 
     @CommandLine.Parameters(index = "0", description = ["The GFF file to read."], arity = "1..")
     override lateinit var files: List<File>

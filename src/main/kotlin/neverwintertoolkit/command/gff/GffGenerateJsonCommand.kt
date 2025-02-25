@@ -14,7 +14,7 @@ import java.util.concurrent.Callable
     description = ["Generate JSON"],
     versionProvider = VersionInfo::class
 )
-class GffGenerateJsonCommand : GffOptions(), Callable<Int> {
+class GffGenerateJsonCommand : GffTextGenerator(), Callable<Int> {
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(GffGenerateJsonCommand::class.toString())!!
     }
