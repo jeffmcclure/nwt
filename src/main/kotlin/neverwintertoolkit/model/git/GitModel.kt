@@ -11,6 +11,7 @@ import neverwintertoolkit.file.gff.GffFactory
 import neverwintertoolkit.file.gff.GffObj
 import neverwintertoolkit.model.annotation.NwnField
 import neverwintertoolkit.model.gic.Gic
+import neverwintertoolkit.model.gic.GicSome
 import java.io.OutputStream
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -31,6 +32,12 @@ class Git : GffObj {
         globalOptions?.logInfo { "Writing $target" }
         GenericGffWriter(Gic(), ".gic").writeGff(target)
     }
+
+//    @get:NwnField(name = "List", type = "List", structType = 0)
+    @get:JsonProperty("GicList")
+    @set:JsonProperty("GicList")
+    var gicList: List<GicSome>? = null
+
 
     @get:NwnField(name = "Door List", type = "List", structType = 8)
     @get:JsonProperty("DoorList")
@@ -86,6 +93,8 @@ class Git : GffObj {
     @get:JsonProperty("VarTable")
     @set:JsonProperty("VarTable")
     var varTable: List<GitVarTable>? = null
+
+
 }
 
 class GitTranslate {
@@ -802,6 +811,11 @@ class GitCreature {
     @get:JsonProperty("VisTransformList")
     @set:JsonProperty("VisTransformList")
     var visTransformList: List<GitVisTransform>? = null
+
+    //@get:NwnField(name = "Comment", type = "CExoString")
+    @get:JsonProperty("GicComment")
+    @set:JsonProperty("GicComment")
+    var gicComment: String? = null
 }
 
 class GitVisTransform {
@@ -1222,6 +1236,11 @@ class GitDoor {
     @get:JsonProperty("VisualTransform")
     @set:JsonProperty("VisualTransform")
     var visualTransform: GitVisualTransform? = null
+
+    //@get:NwnField(name = "Comment", type = "CExoString")
+    @get:JsonProperty("GicComment")
+    @set:JsonProperty("GicComment")
+    var gicComment: String? = null
 }
 
 class GitEncounter {
@@ -2294,6 +2313,11 @@ class GitPlaceable {
     @get:JsonProperty("VisualTransform")
     @set:JsonProperty("VisualTransform")
     var visualTransform: GitVisualTransform? = null
+
+    //@get:NwnField(name = "Comment", type = "CExoString")
+    @get:JsonProperty("GicComment")
+    @set:JsonProperty("GicComment")
+    var gicComment: String? = null
 }
 
 class GitProperties {
@@ -2766,6 +2790,16 @@ class GitSound {
     @get:JsonProperty("VarTable")
     @set:JsonProperty("VarTable")
     var varTable: List<GitVarTable>? = null
+
+    //@get:NwnField(name = "PlayInToolset", type = "BYTE")
+    @get:JsonProperty("GicPlayInToolset")
+    @set:JsonProperty("GicPlayInToolset")
+    var gicPlayInToolset: UByte? = null
+
+    //@get:NwnField(name = "Comment", type = "CExoString")
+    @get:JsonProperty("GicComment")
+    @set:JsonProperty("GicComment")
+    var gicComment: String? = null
 }
 
 class GitSounds {
@@ -2939,6 +2973,11 @@ class GitStore {
     @get:JsonProperty("IdentifyPrice")
     @set:JsonProperty("IdentifyPrice")
     var identifyPrice: Int? = null
+
+    //@get:NwnField(name = "Comment", type = "CExoString")
+    @get:JsonProperty("GicComment")
+    @set:JsonProperty("GicComment")
+    var gicComment: String? = null
 }
 
 class GitTemplate {
@@ -3125,6 +3164,11 @@ class GitTrigger {
     @get:JsonProperty("YPosition")
     @set:JsonProperty("YPosition")
     var yPosition: Float? = null
+
+    //@get:NwnField(name = "Comment", type = "CExoString")
+    @get:JsonProperty("GicComment")
+    @set:JsonProperty("GicComment")
+    var gicComment: String? = null
 }
 
 class GitVarTable {
@@ -3249,6 +3293,11 @@ class GitWaypoint {
     @get:JsonProperty("VarTable")
     @set:JsonProperty("VarTable")
     var varTable: List<GitVarTable>? = null
+
+    //@get:NwnField(name = "Comment", type = "CExoString")
+    @get:JsonProperty("GicComment")
+    @set:JsonProperty("GicComment")
+    var gicComment: String? = null
 }
 
 class GitWillNotBuy {

@@ -35,7 +35,13 @@ class CExoLocStringSerializer(val jsonSettings: JsonSettings) : StdSerializer<CE
         if (value != null) {
             if (value.stringRef == 4294967295L && value.strings.isEmpty()) {
                 gen.writeNull()
-            } else if (jsonSettings.simplifyJson && value.stringRef == 4294967295L && value.strings.size == 1 && value.strings[0].id == 0) {
+//            } else if (jsonSettings.simplifyJson && value.stringRef == 4294967295L && value.strings.size == 1 && value.strings[0].id == 0) {
+//                gen.writeString(value.strings[0].string)
+            } else if (jsonSettings.simplifyJson
+                && value.strings.size == 1
+                && value.strings[0].string != null
+                //&& value.strings[0].string!!.isNotBlank()
+                ) {
                 gen.writeString(value.strings[0].string)
             } else {
                 objectMapper.writeValue(gen, value)

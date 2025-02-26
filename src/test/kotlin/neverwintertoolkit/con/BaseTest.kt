@@ -11,6 +11,7 @@ import java.util.Random
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
+import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.math.absoluteValue
@@ -25,6 +26,8 @@ open class BaseTest(var debugTestMode: Boolean = false) {
     companion object {
         init {
             System.setProperty("WORK_DIR", "build")
+            Path.of("build", "NeverwinterNights").createDirectories()
+            Path.of("build", "NeverwinterNights2").createDirectories()
             globalSettings.strictTestingMode = true
         }
 
