@@ -23,14 +23,12 @@ class MergeGicTest : BaseTest() {
             val gitFactory =
                 GffFactory.getFactoryForFileName(gitPath) ?: throw RuntimeException("cannot find factory for $gitPath")
             val git = gitFactory.parseJson(gitPath) as Git
-            println(git.javaClass.name)
 
             val gicPath = gicDir.resolve(gitPath.name.removeSuffix(".git.json5") + ".gic.json5")
             println(gicPath)
             val gicFactory =
                 GffFactory.getFactoryForFileName(gicPath) ?: throw RuntimeException("cannot find factory for $gicPath")
             val gic = gicFactory.parseJson(gicPath) as Gic
-            println(gic.javaClass.name)
 
             git.gicList = gic.list
 
@@ -68,8 +66,7 @@ class MergeGicTest : BaseTest() {
 
             //val jsonSettings = JsonSettings(pretty = true, simplifyJson = true)
             globalSettings.simplifyJson = true
-            gitPath.parent.resolve(gitPath.name + "-2.json5").writeText(git.toJson())
-
+            gitPath.parent.resolve(gitPath.name).writeText(git.toJson())
         }
     }
 }

@@ -25,12 +25,17 @@ class Git : GffObj {
     //override fun writeGff(output: OutputStream) = GenericGffWriter(this, ".git").writeGff(output)
     override fun writeGff(output: OutputStream) = throw UnsupportedOperationException()
 
-    override fun writeGff(file: Path, globalOptions: GlobalOptions?) {
-        globalOptions?.logInfo { "Writing $file" }
+    val regex = ".git$".toRegex()
+
+    override fun writeGff(file: Path, globalOptions: GlobalOptions?) : List<Path> {
+        globalOptions?.log { "Writing_x $file" }
         GenericGffWriter(this, ".git").writeGff(file)
-        val target = file.parent?.resolve(file.name + ".1.gic") ?: Path.of(file.name + ".1.gic")
-        globalOptions?.logInfo { "Writing $target" }
+        val target = file.parent?.resolve(file.name.replace(regex, ".gic"))
+            ?: Path.of(file.name.replace(regex, ".gic"))
+        globalOptions?.log { "Writing_x $target" }
         GenericGffWriter(Gic(), ".gic").writeGff(target)
+
+        return listOf(file, target)
     }
 
 //    @get:NwnField(name = "List", type = "List", structType = 0)

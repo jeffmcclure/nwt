@@ -44,11 +44,13 @@ interface GffObj : BaseMapper {
     }
 
     fun writeGff(output: OutputStream)
-    fun writeGff(file: Path, globalOptions: GlobalOptions? = null) {
-        println("Writing $file")
+    fun writeGff(file: Path, globalOptions: GlobalOptions? = null) : List<Path> {
+        //println("Writing_a $file")
         file.outputStream().use { out ->
             writeGff(out)
         }
+
+        return listOf(file)
     }
 
     fun removeStructIds() {

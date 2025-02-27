@@ -83,7 +83,7 @@ class CompileCommand(base: BaseBuildCommand? = null) : BaseBuildCommand() {
                 cmd.add(globalSettings.nwnHome)
 //                --userdirectory USERDIR
 
-                if (vOption) cmd.add("--verbose")
+                if (statusLogLevel > 1) cmd.add("--verbose")
                 if (yOption) cmd.add("-y")
                 val nwt = Nwt.parseJson(getNwtJsonFile(dir)).first()
                 if (nwt.erfPath.isNotEmpty()) {

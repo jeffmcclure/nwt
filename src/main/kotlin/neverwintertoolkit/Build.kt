@@ -130,7 +130,9 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
                         ascope.launch {
                             logger.debug("processing of {}", rec)
                             val toAdd = processPaths(rec.value, counter, size)
-                            erfFile.addFile(toAdd)
+                            toAdd.forEach {
+                                erfFile.addFile(it)
+                            }
                         }
                     }
                 }
@@ -149,10 +151,10 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
 
     val baseFormat = "  %5d / %5d : %s %s"
 
-    private suspend fun processPaths(rec: List<Rec>, index: AtomicInteger, size: Int): Path {
+    private suspend fun processPaths(rec: List<Rec>, index: AtomicInteger, size: Int): List<Path> {
         rec.firstOrNull { !GffFactory.isJsonFile(it.aPath) }?.let { rec1 ->
             buildCommand.logSuspend { baseFormat.format(index.incrementAndGet(), size, "Adding", rec1.aPath) }
-            return rec1.aPath
+            return listOf(rec1.aPath)
         }
 
         // target artifact is the same for all
@@ -168,7 +170,7 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
                     ) + " for ${it.aPath.name}"
                 }
             }
-            return targ
+            return listOf(targ)
         }
 
 //        buildCommand.logDebug { "size = ${rec.size}" }
@@ -185,14 +187,14 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
             }) {
             buildCommand.logDebug { "one" }
             rec.forEach {
-                buildCommand.logDebug { "$it" }
+                buildCommand.logTrace { "$it" }
             }
             val arec = rec.firstOrNull {
                 it.baseName.lowercase().endsWith(".dlg.json5") ||
                         it.baseName.lowercase().endsWith(".dlg.json") ||
                         it.baseName.lowercase().endsWith(".dlg")
             } ?: throw RuntimeException("none found")
-            buildCommand.logDebug { "$arec" }
+            buildCommand.logTrace { "$arec" }
             val obj = processOnePath(index, size, arec, targ) as Dlg
 
 //            val dlgs: List<URL> =
@@ -203,22 +205,22 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
             }.map { aaa: Rec ->
 //                buildCommand.logDebug { "two" }
                 buildCommand.logSuspend {
-                    baseFormat.format(index.incrementAndGet(), size, "Compiling and adding", aaa.aPath)
+                    baseFormat.format(index.incrementAndGet(), size, "Compiling and adding (2)", aaa.aPath)
                 }
                 ReadPart().readPart(obj, aaa.aPath.toUri().toURL())
 //                aaa.aPath.toUri().toURL()
             }
 //            ReadPart().readPart(obj, *dlgs.toTypedArray())
-            DlgSorter(obj).sorted().writeGff(targ)
+            return DlgSorter(obj).sorted().writeGff(targ)
 //            obj.writeGff(targ)
         } else {
             rec.forEach { arec ->
                 val obj = processOnePath(index, size, arec, targ)
-                obj.writeGff(targ)
+                return obj.writeGff(targ)
             }
         }
 
-        return targ
+        return listOf(targ)
     }
 
     private suspend fun processOnePath(
@@ -228,7 +230,7 @@ class Build(val nwtJson: Path, val dir: Path = nwtJson.parent, val buildCommand:
         targ: Path
     ): GffObj {
         buildCommand.logSuspend {
-            baseFormat.format(index.incrementAndGet(), size, "Compiling and adding", arec.aPath)
+            baseFormat.format(index.incrementAndGet(), size, "Compiling and adding (2)", arec.aPath)
         }
         val factory: GffFactory<out GffObj> = GffFactory.getFactoryForFileName(arec.aPath.name)
             ?: throw RuntimeException("Could not find factory for ${arec.aPath.name}")

@@ -86,7 +86,7 @@ class ErfWriter(val options: GlobalOptions = GlobalOptions(), strings: List<AStr
 
     private fun writeResourceData(out: OutputStream) {
         files.sortedBy { it.name.lowercase() }.forEach { aFile ->
-            options.logDebug { "writing ${aFile.name}" }
+            options.logTrace { "writing ${aFile.name}" }
             aFile.inputStream().use { input ->
                 input.copyTo(out)
             }

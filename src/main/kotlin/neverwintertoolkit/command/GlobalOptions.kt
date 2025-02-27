@@ -85,6 +85,15 @@ open class GlobalOptions(prints: PrintStream? = null) {
         }
     }
 
+    fun log(block: () -> String) {
+        println("\n\nstatusLogLevel=$statusLogLevel\n")
+        if (statusLogLevel > 1) {
+            logDebug(block)
+        } else {
+            logInfoNo(block)
+        }
+    }
+
     suspend fun infoSuspendNo(block: () -> String) {
         if (statusLogLevel > 0) {
             semaphore.acquire()
