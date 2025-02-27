@@ -11,7 +11,14 @@ import neverwintertoolkit.file.gff.GffFactory
 import neverwintertoolkit.file.gff.GffObj
 import neverwintertoolkit.model.annotation.NwnField
 import neverwintertoolkit.model.gic.Gic
+import neverwintertoolkit.model.gic.GicCreature
+import neverwintertoolkit.model.gic.GicDoor
+import neverwintertoolkit.model.gic.GicPlaceable
 import neverwintertoolkit.model.gic.GicSome
+import neverwintertoolkit.model.gic.GicSound
+import neverwintertoolkit.model.gic.GicStore
+import neverwintertoolkit.model.gic.GicTrigger
+import neverwintertoolkit.model.gic.GicWaypoint
 import java.io.OutputStream
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -33,12 +40,49 @@ class Git : GffObj {
         val target = file.parent?.resolve(file.name.replace(regex, ".gic"))
             ?: Path.of(file.name.replace(regex, ".gic"))
         globalOptions?.log { "Writing_x $target" }
-        GenericGffWriter(Gic(), ".gic").writeGff(target)
+        GenericGffWriter(this.toGic(), ".gic").writeGff(target)
 
         return listOf(file, target)
     }
 
-//    @get:NwnField(name = "List", type = "List", structType = 0)
+    private fun toGic() : Gic {
+
+        val gic = Gic()
+
+        gic.list = gicList
+
+        gic.creatureList = creatureList?.map {
+            GicCreature().apply { comment = it.gicComment }
+        }
+
+        gic.doorList = doorList?.map {
+            GicDoor().apply { comment = it.gicComment }
+        }
+
+        gic.placeableList = placeableList?.map {
+            GicPlaceable().apply { comment = it.gicComment }
+        }
+
+        gic.soundList = soundList?.map {
+            GicSound().apply { comment = it.gicComment; playInToolset = it.gicPlayInToolset }
+        }
+
+        gic.triggerList = triggerList?.map {
+            GicTrigger().apply { comment = it.gicComment }
+        }
+
+        gic.waypointList = waypointList?.map {
+            GicWaypoint().apply { comment = it.gicComment }
+        }
+
+        gic.storeList = storeList?.map {
+            GicStore().apply { comment = it.gicComment }
+        }
+
+        return gic
+    }
+
+    //    @get:NwnField(name = "List", type = "List", structType = 0)
     @get:JsonProperty("GicList")
     @set:JsonProperty("GicList")
     var gicList: List<GicSome>? = null

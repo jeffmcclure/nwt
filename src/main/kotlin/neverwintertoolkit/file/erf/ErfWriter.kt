@@ -85,8 +85,9 @@ class ErfWriter(val options: GlobalOptions = GlobalOptions(), strings: List<AStr
     }
 
     private fun writeResourceData(out: OutputStream) {
-        files.sortedBy { it.name.lowercase() }.forEach { aFile ->
-            options.logTrace { "writing ${aFile.name}" }
+        val count = files.size
+        files.sortedBy { it.name.lowercase() }.forEachIndexed { index, aFile ->
+            options.logTrace { "writing %5d / %5d %s".format(index, count, aFile.name) }
             aFile.inputStream().use { input ->
                 input.copyTo(out)
             }
