@@ -19,6 +19,7 @@ import java.time.format.DateTimeFormatter
 
   ./gradlew cleanTest test --tests "neverwintertoolkit.con.JsonTest.one"
   ./gradlew -q dependencies --configuration testRuntimeClasspath
+  ./gradlew -q dependencies --configuration runtimeClasspath
   ./gradlew --refresh-dependencies
   ./gradlew --refresh-dependencies compileJava
  */
@@ -31,9 +32,11 @@ val binDir = System.getenv("BIN_DIR")
 
 plugins {
 //    kotlin("jvm").version("1.8.22")
-    id("org.jetbrains.kotlin.jvm") version "2.1.20-Beta2"
-    id("org.jetbrains.kotlin.plugin.allopen") version "2.1.20-Beta2"
-    id("com.google.devtools.ksp") version "2.1.20-Beta2-1.0.29"
+    id("org.jetbrains.kotlin.jvm") version "2.1.20-RC3"
+    id("org.jetbrains.kotlin.plugin.allopen") version "2.1.20-RC3"
+    kotlin("plugin.serialization") version "2.1.20-RC3"
+    id("com.google.devtools.ksp") version "2.1.20-RC3-1.0.31"
+
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.4.5"
 
@@ -47,7 +50,6 @@ plugins {
     id("io.ktor.plugin") version "3.0.0"
     id("org.ajoberstar.grgit") version "5.3.0"
 //    id("kotlinx-serialization")
-    kotlin("plugin.serialization") version "2.1.20-Beta2"
 
 }
 
@@ -83,10 +85,10 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
 //    implementation("io.github.microutils:kotlin-logging-jvm:4.0.0-beta-2")
-    api("ch.qos.logback:logback-classic:1.5.16")
-//    runtimeOnly("ch.qos.logback:logback-classic")
 
-    implementation("io.github.java-diff-utils:java-diff-utils:4.12")
+    api("ch.qos.logback:logback-classic:1.5.17")
+    implementation("io.github.java-diff-utils:java-diff-utils:4.15")
+    implementation("com.github.lalyos:jfiglet:0.0.9")
 
 //    runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
@@ -96,7 +98,6 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
 //    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.16.0-rc1")
 
-    implementation("com.github.lalyos:jfiglet:0.0.9")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     implementation("javax.json:javax.json-api:1.1.4")
