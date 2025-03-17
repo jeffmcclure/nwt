@@ -82,6 +82,42 @@ class Git : GffObj {
         return gic
     }
 
+    fun applyGic(gic: Gic) {
+        val git = this
+
+        git.gicList = gic.list
+
+        gic.creatureList?.forEachIndexed { index, gic ->
+            git.creatureList?.get(index)?.gicComment = gic.comment
+        }
+
+        gic.doorList?.forEachIndexed { index, gic ->
+            git.doorList?.get(index)?.gicComment = gic.comment
+        }
+
+        gic.placeableList?.forEachIndexed { index, gic ->
+            git.placeableList?.get(index)?.gicComment = gic.comment
+        }
+
+        gic.soundList?.forEachIndexed { index, gic ->
+            git.soundList?.get(index)?.gicComment = gic.comment
+            git.soundList?.get(index)?.gicPlayInToolset = gic.playInToolset
+        }
+
+        gic.triggerList?.forEachIndexed { index, gic ->
+            git.triggerList?.get(index)?.gicComment = gic.comment
+        }
+
+        gic.waypointList?.forEachIndexed { index, gic ->
+            git.waypointList?.get(index)?.gicComment = gic.comment
+        }
+
+        gic.storeList?.forEachIndexed { index, gic ->
+            git.storeList?.get(index)?.gicComment = gic.comment
+        }
+
+    }
+
     //    @get:NwnField(name = "List", type = "List", structType = 0)
     @get:JsonProperty("GicList")
     @set:JsonProperty("GicList")

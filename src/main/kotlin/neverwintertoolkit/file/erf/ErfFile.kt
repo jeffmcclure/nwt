@@ -18,6 +18,8 @@ import neverwintertoolkit.copyBytesTo
 import neverwintertoolkit.file.gff.GffFactory
 import neverwintertoolkit.file.gff.GffFile
 import neverwintertoolkit.globalSettings
+import neverwintertoolkit.model.gic.Gic
+import neverwintertoolkit.model.git.Git
 import neverwintertoolkit.process32BitIntAsLong
 import neverwintertoolkit.read16BitNumber
 import neverwintertoolkit.read32BitNumber
@@ -272,7 +274,7 @@ class ErfFile constructor(val file: Path, val globalOptions: GlobalOptions, val 
         return 0
     }
 
-    fun extractEntry(entry: ErfFileEntry, targetPath: Path, useJson: Boolean, toStdout: Boolean, overwrite: Boolean, status: (name: String) -> Unit = {}) {
+    fun extractEntry(entry: ErfFileEntry, targetPath: Path, useJson: Boolean, toStdout: Boolean, overwrite: Boolean, status: (name: String) -> Unit = {}, allEntries: List<ErfFileEntry>? = null) {
         logger.debug("extract {}[{}] to {}", file, entry.fileNameWithExtension, targetPath)
 
         val convertToJson = useJson &&
@@ -282,6 +284,9 @@ class ErfFile constructor(val file: Path, val globalOptions: GlobalOptions, val 
             if (convertToJson) {
                 val gffFile = GffFile(file, globalOffset = entry.offsetToResource, status = outStatus, entryName = targetPath.name, gffOptions = GffOptions())
                 val obj = gffFile.readObject()
+                if (allEntries != null && obj is Git) {
+                    applyGic(allEntries, entry, targetPath, obj, status)
+                }
                 obj.writeJson(System.out)
             } else {
                 file.toFile().inputStream().use { input ->
@@ -321,6 +326,9 @@ class ErfFile constructor(val file: Path, val globalOptions: GlobalOptions, val 
                     } catch (e: Exception) {
                         throw RuntimeException("Error reading entry $entry", e)
                     }
+                    if (allEntries != null && obj is Git) {
+                        applyGic(allEntries, entry, targetPath, obj, status)
+                    }
                     obj.writeJson(tpath)
                 }
             } else {
@@ -335,6 +343,25 @@ class ErfFile constructor(val file: Path, val globalOptions: GlobalOptions, val 
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun applyGic(
+        allEntries: List<ErfFileEntry>,
+        entry: ErfFileEntry,
+        targetPath: Path,
+        gitObj: Git,
+        status: (String) -> Unit
+    ) {
+        val gicPart = allEntries.firstOrNull { it.resType == FileType.kFileTypeGIC.id && it.fileName == entry.fileName }
+        if (gicPart != null) {
+            val gffFile2 = GffFile(file, globalOffset = gicPart.offsetToResource, status = outStatus, entryName = targetPath.name, gffOptions = GffOptions(), globalOptions = globalOptions)
+            val gicObj = gffFile2.readObject()
+            if (gicObj is Gic) {
+                gitObj.applyGic(gicObj)
+            } else {
+                status("Unexpected object type ${gicObj.javaClass.name}")
             }
         }
     }

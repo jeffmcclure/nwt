@@ -15,6 +15,9 @@ import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.LongAdder
+import kotlin.concurrent.atomics.AtomicInt
 import kotlin.io.path.name
 
 class Unpack(
@@ -37,61 +40,68 @@ class Unpack(
     @OptIn(DelicateCoroutinesApi::class)
     fun unpackJar(source: Path? = null, erfJson: Boolean = false, unpackNcsFiles: Boolean = false) {
         val nwt = getTargets().first()
-            logger.info("target = {}", nwt.source)
+        logger.info("target = {}", nwt.source)
 
-            val file = source ?: nwt.sourcePath
-            val fname = file.name
-            if (Files.notExists(file)) throw RuntimeException("does not exist $file")
-            val erf = ErfFile(file, outStatus = status, globalOptions = globalOptions)
-            if (erfJson)
-                erf.extractErfJson(dir, globalOptions.status)
+        val file = source ?: nwt.sourcePath
+        val fname = file.name
+        if (Files.notExists(file)) throw RuntimeException("does not exist $file")
+        val erf = ErfFile(file, outStatus = status, globalOptions = globalOptions)
+        if (erfJson)
+            erf.extractErfJson(dir, globalOptions.status)
 
-            globalOptions.logDebug { "threadCount=${threadCount}" }
+        globalOptions.logDebug { "threadCount=${threadCount}" }
 
-            val context2 = newFixedThreadPoolContext(threadCount, "unpack")
+        val context2 = newFixedThreadPoolContext(threadCount, "unpack")
 
-            runBlocking(context2) {
-                val ascope = this
-                val allEntries = if (unpackNcsFiles)
-                    erf.readAllEntries()
-                else
-                    erf.readAllEntries().filter { it.resType != FileType.kFileTypeNCS.id }
+        runBlocking(context2) {
+            val ascope = this
+            val allEntries = if (unpackNcsFiles)
+                erf.readAllEntries()
+            else
+                erf.readAllEntries().filter { it.resType != FileType.kFileTypeNCS.id }
 
-                val entryCount = allEntries.size
-                var counter = 0
-                val sem = Semaphore(1)
-                allEntries.forEach { entry ->
-                    val (pattern, loc) = nwt.rules?.firstOrNull { (pattern, loc) ->
-                        val pathMatcher = FileSystems.getDefault().getPathMatcher("glob:$pattern")
-                        pathMatcher.matches(Paths.get(entry.fileNameWithExtension))
-                    } ?: Pair("*" + entry.fileExtension, "src/" + entry.fileExtension.substring(1)) // default is a directory under src/ with same extension
+            val entryCount = allEntries.size
+            var counter = AtomicInteger(0)
+//            val sem = Semaphore(1)
+            allEntries.forEach { entry ->
 
-                    if (loc.isNotBlank()) {
-                        ascope.launch {
-                            val tar = dir.resolve(loc).resolve(entry.fileNameWithExtension)
-                            val relative = Paths.get(loc).resolve(entry.fileNameWithExtension)
-                            var entryName: String? = null
-                            if (globalOptions.infoEnabled) {
-                                val willJson = useJson && GffFactory.getFactoryForFileName(entry.fileNameWithExtension) != null
-                                entryName = if (willJson) {
-                                    "$relative${globalSettings.getJsonExtension()}"
-                                } else {
-                                    relative.toString()
-                                }
-                                sem.acquire()
-                                try {
-                                    println(" %s %5d / %5d %s %s".format(fname, ++counter, entryCount, "extracting", entryName))
-                                } finally {
-                                    sem.release()
-                                }
+                val (pattern, loc) = nwt.rules?.firstOrNull { (pattern, loc) ->
+                    val pathMatcher = FileSystems.getDefault().getPathMatcher("glob:$pattern")
+                    pathMatcher.matches(Paths.get(entry.fileNameWithExtension))
+                } ?: Pair("*" + entry.fileExtension, "src/" + entry.fileExtension.substring(1)) // default is a directory under src/ with same extension
+
+                if (loc.isNotBlank()) {
+                    ascope.launch {
+                        val tar = dir.resolve(loc).resolve(entry.fileNameWithExtension)
+                        val relative = Paths.get(loc).resolve(entry.fileNameWithExtension)
+                        var entryName: String? = null
+                        if (globalOptions.infoEnabled) {
+                            val willJson = useJson && GffFactory.getFactoryForFileName(entry.fileNameWithExtension) != null
+                            entryName = if (willJson) {
+                                "$relative${globalSettings.getJsonExtension()}"
+                            } else {
+                                relative.toString()
                             }
-                            erf.extractEntry(entry, tar, useJson, overwrite = false, toStdout = false)
+//                            sem.acquire()
+//                            try {
+//                                globalOptions.logInfo { " %s %5d / %5d %-10s %s".format(fname, ++counter, entryCount, "extracting", entryName) }
+//                            } finally {
+//                                sem.release()
+//                            }
                         }
-                    } else {
-                        globalOptions.logInfo { "%20s %10s %s".format(fname, "skipping", entry.fileNameWithExtension) }
+                        val formatStr = " %s %5d / %5d %-10s %s"
+                        if (entry.fileType == FileType.kFileTypeGIC) {
+                            globalOptions.logInfo { formatStr.format(fname, counter.incrementAndGet(), entryCount, "skipping", entryName) }
+                        } else {
+                            globalOptions.logInfo { formatStr.format(fname, counter.incrementAndGet(), entryCount, "extracting", entryName) }
+                            erf.extractEntry(entry, tar, useJson, overwrite = false, toStdout = false, allEntries = allEntries)
+                        }
                     }
+                } else {
+                    globalOptions.logInfo { "%20s %-10s %s".format(fname, "skipping blank", entry.fileNameWithExtension) }
                 }
             }
+        }
         rebuildHakPath(nwtJson, dir, globalOptions)
     }
 }

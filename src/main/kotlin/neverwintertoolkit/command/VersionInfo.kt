@@ -23,7 +23,10 @@ class VersionInfo : CommandLine.IVersionProvider {
             }.toCollection(list)
         }
 
+        listOf("java.version", "java.home", "java.runtime.version").forEach {
+            list.add(it + "=" + System.getProperty(it))
+        }
+
         return list.toTypedArray()
     }
 }
-

@@ -30,36 +30,8 @@ class MergeGicTest : BaseTest() {
                 GffFactory.getFactoryForFileName(gicPath) ?: throw RuntimeException("cannot find factory for $gicPath")
             val gic = gicFactory.parseJson(gicPath) as Gic
 
-            git.gicList = gic.list
+            git.applyGic(gic)
 
-            gic.creatureList?.forEachIndexed { index, gic ->
-                git.creatureList?.get(index)?.gicComment = gic.comment
-            }
-
-            gic.doorList?.forEachIndexed { index, gic ->
-                git.doorList?.get(index)?.gicComment = gic.comment
-            }
-
-            gic.placeableList?.forEachIndexed { index, gic ->
-                git.placeableList?.get(index)?.gicComment = gic.comment
-            }
-
-            gic.soundList?.forEachIndexed { index, gic ->
-                git.soundList?.get(index)?.gicComment = gic.comment
-                git.soundList?.get(index)?.gicPlayInToolset = gic.playInToolset
-            }
-
-            gic.triggerList?.forEachIndexed { index, gic ->
-                git.triggerList?.get(index)?.gicComment = gic.comment
-            }
-
-            gic.waypointList?.forEachIndexed { index, gic ->
-                git.waypointList?.get(index)?.gicComment = gic.comment
-            }
-
-            gic.storeList?.forEachIndexed { index, gic ->
-                git.storeList?.get(index)?.gicComment = gic.comment
-            }
 
             gic.toJson()
 
