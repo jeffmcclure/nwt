@@ -8,10 +8,12 @@ import java.nio.file.Path
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.writeText
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class MergeGicTest : BaseTest() {
 
+    @Ignore // do not run by default
     @Test
     fun one() {
         val dir = Path.of("/home/jeffmcclure/d1/d/lot/src")
