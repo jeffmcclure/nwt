@@ -56,14 +56,14 @@ class ExtractCommand : BaseCommand() {
                 val erfFile = ErfFile(path, this)
 
                 if (debugEnabled) {
-                    println("file path : %s".format(path.pathString))
-                    println("file size : %,d".format(Files.size(path)))
+                    logDebug { "file path : %s".format(path.pathString) }
+                    logDebug { "file size : %,d".format(Files.size(path)) }
                     erfFile.erfHeader.print()
                     erfFile.readStrings().firstOrNull()?.let {
-                        println()
-                        println(it)
+                        logDebug { "" }
+                        logDebug { it.toString() }
                     }
-                    println()
+                    logDebug { "" }
                 }
 
                 return erfFile.extractAll(

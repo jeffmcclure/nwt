@@ -263,7 +263,7 @@ class ErfFile constructor(val file: Path, val globalOptions: GlobalOptions, val 
                         "Extracting ${index + 1}/$count $name"
                     }
                     if (globalOptions.infoEnabled) status.flush()
-                })
+                }, allEntries = list0)
             } catch (e: Exception) {
                 logger.error("Error Extracting ${index + 1}/$count: " + e.message, e)
                 System.err.println("Error Extracting ${index + 1}/$count: " + e.message)
