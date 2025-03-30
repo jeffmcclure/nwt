@@ -32,3 +32,4 @@ body bag 6 - pouch
 | .jrl      | Journal                    |
 | .fac      | Faction                    |
 | .bic      | Character/creature         |
+| .bmu      | Music file (mpg like)      |

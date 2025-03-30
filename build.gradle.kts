@@ -32,10 +32,10 @@ val binDir = System.getenv("BIN_DIR")
 
 plugins {
 //    kotlin("jvm").version("1.8.22")
-    id("org.jetbrains.kotlin.jvm") version "2.1.20-RC3"
-    id("org.jetbrains.kotlin.plugin.allopen") version "2.1.20-RC3"
-    kotlin("plugin.serialization") version "2.1.20-RC3"
-    id("com.google.devtools.ksp") version "2.1.20-RC3-1.0.31"
+    id("org.jetbrains.kotlin.jvm") version "2.1.20"
+    id("org.jetbrains.kotlin.plugin.allopen") version "2.1.20"
+    kotlin("plugin.serialization") version "2.1.20"
+    id("com.google.devtools.ksp") version "2.1.20-1.0.31"
 
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.4.5"
