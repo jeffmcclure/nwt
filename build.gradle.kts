@@ -35,7 +35,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "2.1.20"
     id("org.jetbrains.kotlin.plugin.allopen") version "2.1.20"
     kotlin("plugin.serialization") version "2.1.20"
-    id("com.google.devtools.ksp") version "2.1.20-1.0.31"
+    id("com.google.devtools.ksp") version "2.1.20-1.0.32"
 
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.4.5"
@@ -86,16 +86,16 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
 //    implementation("io.github.microutils:kotlin-logging-jvm:4.0.0-beta-2")
 
-    api("ch.qos.logback:logback-classic:1.5.17")
+    api("ch.qos.logback:logback-classic:1.5.18")
     implementation("io.github.java-diff-utils:java-diff-utils:4.15")
     implementation("com.github.lalyos:jfiglet:0.0.9")
 
 //    runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
 //    implementation("com.fasterxml.jackson.core:jackson-core")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.18.2")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.18.3")
 //    implementation("com.fasterxml.jackson.core:jackson-databind:")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.3")
 //    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.16.0-rc1")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
